@@ -1,0 +1,36 @@
+
+
+dimensionering(voorziening, vraag):
+    Functie om nieuwe voorziening te dimensioneren en de nieuwe dictionary te returnen
+
+    inputs
+        voorziening = naam van een nieuwe voorziening
+        vraag = maxvraag uit het verbruikprofiel
+    return: dictionary van een nieuwe, gedimensioneerde, voorziening
+
+dimensioneringPV(elecProductie, kost)
+    Functie om de ingegeven zonnedata te scalen
+
+
+generateSLP(toepassingen,SLPgas,SLPelec)
+    Functie om een SLP te genereren per toepassing
+
+    return dictionary met voor elke toepassing (key) een list met een SLP (value)
+
+
+verbruikProfiel(totverbruik,verbruiksprofiel):
+    Functie om het verbruikprofiel te maken met het jaarverbruik en een SLP
+    
+    return jaarverbruik opgedeeld per kwartier voor een jaar 
+
+
+
+nieuweVoorzieningen(scenario,toepassingen,huidigprof):  #deze functie wordt doorlopen door alle scenarios die meegegeven worden en bepaalt daaruit welke de nieuwe voorzieningen worden die vergelekenn gaan worden met de huidige situatie
+    
+    return een dictionary met voor elke toepassing (key) een dictionary van de juiste voorziening (value)
+
+energieVraag(efficientie,huidigVraagProfiel):
+    return de energievraag per kwartier, gebaseerd op het verbruikprofiel
+
+nieuwVerbruik(efficientie,huidigVraagProfiel):
+    return een nieuwverbruik gebaseerd op de energievraag, met een nieuwe effienctie

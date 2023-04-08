@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div  class = "column" >
+<h1 >Verbruiksgegevens</h1>
+    <form action="" method="post">
+      {{ form.hidden_tag() }}
+      {% for field in form %}
+      <p style = "text-transform: capitalize"><strong>{{field.description}} </strong></p>
+      
+      <div class = "tab">{{ field.label }}: {{ field }}</div>
+
+        {% if field.errors %}
+          <ul class="errors">
+            {% for error in field.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endfor %}
+      <br>
+
+    <input type="submit" value="Volgende">
+  </form>
+
+</div>
+
+<div  class = "column" >
+  <h1> Uitleg </h1>
+      <p>Nu we op de hoogte zijn van de algemene gegevens en huidige voorzieningen van uw woning, resten er enkel nog een paar cijfers die dienen ingevuld te worden. Door op de secties hieronder te klikken kunt u per vraag extra uitleg raadplegen.       
+      </p>
+  <button type="button" class="collapsible">Stookolie (in liter) </button>
+  <div class="content">
+      <p>Stookolie (in liter):
+        Mazout of stookolie wordt in grote aantallen liters besteld en opgeslagen in een tank bij de ketel. Probeer een inschatting te maken van hoeveel liter u bestelt op jaarbasis zodat wij de verdere omzettingen kunnen uitvoeren.          
+      </div>
+  
+  <button type="button" class="collapsible">Aardgas</button>
+  <div class="content">
+      <p>Aardgas (in kWh): Aardgas komt in de woning toe door middel van gasleidingen. Op uw energiefactuur wordt kunt u terugvinden hoeveel kWh aan gas u op jaarbasis verbruikt; vul deze waarde hier in.
+      </p>
+  </div>
+
+  <button type="button" class="collapsible">Elektriciteit (in kWh)</button>
+  <div class="content">
+      <p>Elektriciteit (in kWh): Via kabels van het elektriciteitsnet komt er elektriciteit toe aan uw woning. Alle elektriciteit die u verbruikt maar niet zelf heeft opgewekt via zonnepanelen, haalt u van dit net en betaalt u dus voor. Op uw energiefactuur kunt u terugvinden hoeveel kWh aan elektriciteit u op jaarbasis van dit net haalt; vul deze waarde in.
+      </p>
+  </div>
+
+  <button type="button" class="collapsible">Zonnepanelen</button>
+  <div class="content">
+      <p>Indien u geen zonnepanelen heeft, raden we u aan om te surfen naar <a href="https://apps.energiesparen.be/zonnekaart">Zonnekaart Vlaanderen</a> voor te bekijken wat het potentieel van zonnepanelen kan zijn voor uw woning. Deze gebruiksvriendelijke toepassing van de Vlaamse overheid vereist enkel dat u uw adres invult om een gepersonaliseerde berekening van zonne-opbrengst voor zowel zonnepanelen als een zonneboiler te maken. Uit de kader van ‘Zonnepanelen’ is de waarde bij ‘Een elektriciteitsproductie van … kWh per jaar’ het getal dat u dient in te vullen in de laatste kolom van Stap 3.
+      </p>
+  </div>
+ 
+  
+  
+  </div>
+  
+  
+  
+  <script>
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+  
+  for (i = 0; i < coll.length; i++) {
+    coll[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var content = this.nextElementSibling;
+      if (content.style.display === "block") {
+        content.style.display = "none";
+      } else {
+        content.style.display = "block";
+      }
+    });
+  }
+  </script>
+
+{% endblock %}

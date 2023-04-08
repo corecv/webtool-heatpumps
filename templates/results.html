@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div  class = "column" >
+    <h1> Uw persoonlijke resultaten zijn berekend </h1>
+    <p>Nu alle stappen voltooid zijn, heeft de tool een analyse van uw huidige woning en energie-installatie kunnen uitvoeren en mogelijke opties voor warmtepompen gegenereerd. Download onderstaand PDF-bestand om deze nieuwe scenario’s met hun bijhorende investeringen en besparingen op vlak van energiegebruik en CO2-uitstoot te bekijken.
+<br><br><strong>KANTTEKENING:</strong> De berekende getallen met betrekking tot investering, energiebesparing en CO2-besparing zijn louter richtwaarden. De stappen in deze tool zijn te beperkt om een gedetailleerde berekening te kunnen uitvoeren. Indien u een meer accurate studie van uw huidige energie-installatie en mogelijkheden tot een warmtepomp zoekt, neem dan contact op met een deskundige.
+    </p>
+    {%for dict in table%}
+        <h3>{{dict.get('scenario')}}: {{dict.get('voorziening')}} </h3>
+        
+            <p style="margin-left: 25px;">Besparing CO2: {{dict.get('CO2abs')}} kg = {{dict.get('CO2perc')}} %</p>
+            <p style="margin-left: 25px;">Besparing Primaire energie: {{dict.get('prim')}} kWh = {{dict.get('primP')}}  %</p>
+            <p style="margin-left: 25px;">Besparing Verbruikskost: {{dict.get('kost')}} €/jaar = {{dict.get('kostP')}} %</p>
+
+        
+    {% endfor %}
+     
+    <div class ="file">
+        <hr>
+        <h3>Download hieronder een pdf met meer gedetailleerde resultaten</h3>
+        <a href = "{{url_for('sendFile')}}">Download</a>
+    </div>
+    <div>
+        <hr>
+        <a href = '/'>Homepage</a>
+    </div>
+
+</div>
+
+
+<div  class = "column">
+    
+
+<head>
+    <title>Chart.js Bar Chart - Stacked</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<p>De grafiek toont een procentuele besparingen tussen de/het aangeraden scenario('s) en de huidige situatie.
+    Dus een staaf met een hoogte van 60% betekend een besparing van 60% in de overeenkomstige categorie t.O.v. de huidige situatie
+</p>
+
+    <canvas id="myChart" style="width:100%;height:100%"></canvas>
+
+</div>
+    <script>
+    const ctx = document.getElementById('myChart');
+    const labels = {{labels | tojson}};
+    const data = {
+            labels: labels,
+            datasets: {{datasets | tojson}}
+        };
+    const config = {
+        type: 'bar',
+        data: data,
+        options: {
+            plugins: {
+                legend: {
+                labels: {
+                    // This more specific font property overrides the global property
+                    font: {
+                        size: 25
+                    }}},
+                
+             
+                title: {
+                        display: true,
+                        text: 'Procentuele vergelijking',                            
+                        font: {
+                            size: 30
+                                            }
+                            },
+                        },
+                responsive: true,
+                interaction: {
+                intersect: false,
+                        },
+                scales: {
+                   
+                    y: {display:true,
+                    stacked: true,
+                        title:
+                            {
+                            display:true,
+                            text:"%",
+                            font: {
+                                    size: 30
+                                    }
+                
+                            },
+               
+                }
+                    },
+
+                }
+            };
+
+    new Chart(ctx, config);
+
+    </script>
+    
+
+
+{% endblock %}

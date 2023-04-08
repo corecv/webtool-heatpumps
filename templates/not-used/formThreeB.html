@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="form">
+    <h1>{% block title %} form 3b {% endblock %}</h1>
+<form method="POST">
+    {{ form.csrf_token }}
+    <p> 
+        {{ form.stookolie.label }}
+        {{ form.stookolie(size=5, width = 50) }}
+    </p>
+
+    {% if form.stookolie.errors %}
+        <ul class="errors">
+            {% for error in form.stookolie.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p> 
+        {{ form.costStookolie.label }}
+        {{ form.costStookolie(size=5, width = 50) }}
+    </p>
+
+    {% if form.costStookolie.errors %}
+        <ul class="errors">
+            {% for error in form.costStookolie.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    
+    <p> 
+        {{ form.electriciteit.label }}
+        {{ form.electriciteit(size=5, width = 50) }}
+    </p>
+
+    {% if form.electriciteit.errors %}
+        <ul class="errors">
+            {% for error in form.electriciteit.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p> 
+        {{ form.costElec.label }}
+        {{ form.costElec(size=5, width = 50) }}
+    </p>
+
+    {% if form.costElec.errors %}
+        <ul class="errors">
+            {% for error in form.costElec.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p>
+        <input type="submit" value="Submit">
+    </p>
+
+
+{% endblock %}

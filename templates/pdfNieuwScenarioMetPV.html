@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/css/pdf.css">
+    <style>
+        
+    </style>
+
+
+<div class = "header">
+    <img align="left" src= "static/images/logoCORE.png" alt="Header Image">
+
+<!-- #nu nog logo van core van online halen, niet de bedoeling, zou in file moeten staan -->
+</div>
+<body>
+    <h1>Scenario {{number}}: {{name}} met zonnepanelen</h1>
+    <table>
+        <tbody>
+            <tr>
+                <td ><h2>Nieuwe voorzieningen: </h2></td>
+            </tr>
+    
+        
+            {% for key, value in dict1.items() %}
+                <tr >
+                    <td>{{key }}</td>
+                    <td>{{value}}</td>
+                </tr>
+            {% endfor %}
+            <tr class = "empty"><td></td><td></td></tr>
+
+            <tr>
+                <td><h2>Verbruik, kost & uitstoot: </h2></td>
+            </tr>
+
+            {% for key, value in dict2.items() %}
+                <tr>
+                    <td>{{key}} [kWh/jaar]</td>
+                    <td>{{value}}</td> 
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td>Verbruikskost [&euro;/jaar]: </td>
+                <td> {{var1}}</td>
+            </tr>
+            <tr>
+                <td>Verbruik primaire energie [kWh]: </td>
+                <td> {{var2}}</td>
+            </tr>
+            <tr>
+                <td>CO2 uitstoot [kg/jaar]: </td>
+                <td> {{var3}}</td>
+            </tr>
+            <tr class = "empty"><td></td><td></td></tr>
+
+          
+            <tr>
+                <td><h2>Verbruik tov huidige situatie [kWh/jaar]: </h2></td>
+            </tr>
+            {% for key, value in dict3.items() %}
+            <tr>
+                <td>{{key}}</td>
+                {% if value < 0 %}
+                <td>{{value}}</td>
+                {%elif value > 0 %}
+                <td> +{{value}}</td>
+                {%endif%}
+
+            </tr>
+            {%endfor%}
+            <tr class = "empty"><td></td><td></td></tr>
+            <tr><td><h2>Besparingen</h2></td></tr>
+            </tr>
+                <tr>
+                <td>Besparing verbruikskost [&euro;/jaar]: </td>
+                <td> {{var4}}</td>
+            </tr>
+            <tr>
+                <td>Besparing primaire energie [%]: </td>
+            
+                <td>{{var5}}</td>
+            </tr>
+            <tr>
+                <td>Besparing CO2 uitstoot [%]: </td>
+        
+                <td> {{var6}}</td>
+            </tr>
+            <tr class = "empty"><td></td><td></td></tr>
+
+
+            <tr><td><h2>Financiën</h2></td></tr>
+
+            <tr>
+                <td>Investering [&euro;]: </td>
+                <td> {{var7}}</td>
+            </tr>
+            <tr>
+                <td>Terugverdientijd: </td>
+                <td> {{var8}}</td>
+            </tr>
+            <tr class = "empty"><td></td><td></td></tr>
+
+
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>

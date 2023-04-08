@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/css/pdf.css">
+    <style>
+        
+    </style>
+
+
+</head>
+
+<body>
+    <div>
+        <h2>
+            Dit document bevat een gepersonaliseerde berekening voor uw huis. 
+            Uw huidige situatie van energievoorzieningen wordt vergeleken met een reeks andere mogelijkheden. 
+            Op deze manier krijgt u een duidelijk overzicht van welke mogelijkheden er zijn om energiezuiniger energie te voorzien!
+
+           <p> Onderstaande tabel geeft een overzicht van uw huidige situatie en welke verbruikskosten hieraan gelinkt zijn. Evenals de CO2 uitstoot die u produceert per jaar.</p>
+        </h2>
+
+
+    </div>
+    <h1>Huidige voorzieningen:</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <td rowspan><h2>Huidige voorzieningen: </h2></td>
+            </tr>
+    
+        
+            {% for key, value in dict1.items() %}
+                <tr >
+                    <td>{{key }}</td>
+                    <td>{{value}}</td>
+                </tr>
+            {% endfor %}
+            <tr class = "empty"><td></td><td></td></tr>
+            
+            <tr>
+                <td rowspan><h2>Verbruik, kost & uitstoot: </h2></td>
+            </tr>
+
+            {% for key, value in dict2.items() %}
+                <tr>
+                    <td>{{key}} [kWh/jaar]</td>
+                    <td>{{value}}</td> 
+                </tr>
+            {% endfor %}
+
+            <tr>
+                <td>Verbruikskost [&euro;/jaar]: </td>
+                <td> {{var1}}</td>
+            </tr>
+            <tr>
+                <td>Verbruik primaire energie [kWh]: </td>
+                <td> {{var2}}</td>
+            </tr>
+            <tr>
+                <td>CO2 uitstoot [kg/jaar]: </td>
+                <td> {{var3}}</td>
+            </tr>
+            <tr class = "empty"><td></td><td></td></tr>
+        </tbody>
+    </table>
+
+    <div>
+        <h2>
+            <p>U kan deze resultaten vergelijken met gemiddelde waarden in België (<a href = "https://www.vreg.be/nl/energieverbruik">VREG gegevens</a>). 
+                Maar hierbij raden wij toch aan om met een genuanceerde blik deze vergelijking te maken, 
+                de gemiddelde waarden die de VREG weergeeft zijn waarden van over alle huishoudens in België dus hier zit een grote marge op.
+                Het is niet omdat u bijvoorbeeld onder het gemiddelde verbruik van uw buren zit dat u niets aan uw milieu impact kan doen ;).
+            </p>
+            <p>Onderstaande pagina's vergelijken telkens uw huidige situatie met een alternatief scenario. 
+            Per scenario wordt er de opdeling gemaakt of er een zonnepaneel (PV) installatie geinstalleerd wordt.
+        </p>
+        </h2>
+
+
+    </div>
+
+    <div class="page-break"></div>
+
+    <h1>Page 2</h1>
+    
+
+
+
+
+
+</body>
+
+</html>

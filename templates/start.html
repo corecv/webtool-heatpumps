@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <h1> Startpagina </h1>
+</div>
+<head>
+    <title>uitleg tool</title>
+  </head>
+
+  <body>
+    
+    <p>Welkom!<br>
+      Tijd om af te stappen van die fossiele brandstoffen en over te schakelen naar een warmtepomp (met zonnepanelen). 
+     Met de combinatie van deze technologiën kunt u uw huis op een duurzame manier verwarmen en zo uw steentje bijdragen aan de energietransitie. <br><br>Via de door CORE ontwikkelde ‘3 Stappen Naar Een Warmtepomp’-webtool kunt u snel en eenvoudig checken welk type warmtepomp het meest van toepassing is op uw woning. Daarnaast wordt er een inschatting gemaakt van de investeringen en besparingen met betrekking tot het verbruik en de bijhorende CO2-uitstoot.
+      Natuurlijk zijn de resulterende cijfers in de tool louter richtwaarden. Voor een meer gedetailleerde uitwerking van uw situatie raden we aan om contact op te nemen met een deskundige die advies op maat kan verlenen.
+      <br><br>Bent u klaar om in 3 stappen te ontdekken welke warmtepomp bij uw woning past?
+      Klik dan op ‘Volgende’!
+      </p>
+
+    <form action="/gegevens" method="get">
+      <button type="submit">Volgende</button>
+    </form>
+  </body>
+
+
+{% endblock %}

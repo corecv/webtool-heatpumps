@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div  class = "column" >
+
+    <h1>{% block title %} Huidige voorzieningen {% endblock %}</h1>
+<form method="POST">
+    {{ form.csrf_token }}
+
+    <p> 
+        {{ form.voorzieningRV.label }}
+        {{ form.voorzieningRV(size=5, width = 50) }}
+    </p>
+
+    {% if form.voorzieningRV.errors %}
+        <ul class="errors">
+            {% for error in form.voorzieningRV.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    
+    <p> 
+        {{ form.voorzieningSWW.label }}
+        {{ form.voorzieningSWW(size=5, width = 50) }}
+    </p>
+
+    {% if form.voorzieningSWW.errors %}
+        <ul class="errors">
+            {% for error in form.voorzieningSWW.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p> 
+        {{ form.elec.label }}
+        {{ form.elec(size=5, width = 50) }}
+    </p>
+
+    {% if form.elec.errors %}
+        <ul class="errors">
+            {% for error in form.elec.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p>
+        <input type="submit" value="Submit">
+    </p>
+</form>
+
+</div>
+
+<div  class = "column" >
+    <h1> Uitleg </h1>
+</div>
+
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div  class = "column" >
+    <h1>{% block title %} Huidige voorzieningen {% endblock %}</h1>
+<form method="POST">
+    {{ form.csrf_token }}
+    <p>Welke voorziening heeft u voor uw combisysteem van ruimteverwarming en sanitair warm water?</p>
+    <p> 
+        <!-- {{ form.rvsww.label }} -->
+        {{ form.rvsww(size=5, width = 50) }}
+    </p>
+
+    {% if form.rvsww.errors %}
+        <ul class="errors">
+            {% for error in form.rvsww.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p> 
+        {{ form.elec.label }}
+        {{ form.elec(size=5, width = 50) }}
+    </p>
+
+    {% if form.elec.errors %}
+        <ul class="errors">
+            {% for error in form.elec.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p>
+        <input type="submit" value="Volgende">
+    </p>
+</form>
+</div>
+
+<div  class = "column" >
+    <h1> Uitleg </h1>
+
+        <p>De tweede stap zoomt verder in op de huidige systemen die 
+            geïnstalleerd zijn. Daarnet werd er gevraagd of u met een 
+            combiketel werkt, dus of water voor ruimteverwarming en 
+            tapwater aan elkaar gekoppeld zijn. Indien dit niet het geval is, 
+            kan u een apart systeem voor ruimteverwarming en tapwater aanduiden. Door op de secties hieronder te klikken kunt u per vraag extra uitleg raadplegen.         
+        </p>
+    <button type="button" class="collapsible">Ruimteverwarming</button>
+    <div class="content">
+        <p>-	Stookolieketel:
+            Deze ketel verbrandt stookolie zodat de vrijgekomen warmte gestuurd kan worden naar bv.  radiatoren of vloerverwarming die op hun beurt de ruimte opwarmen. Typisch bevat deze installatie ook een grote tank waarin stookolie opgeslagen wordt.
+            -	Gasketel:
+            Deze ketel verbrandt aardgas zodat de vrijgekomen warmte gestuurd kan worden naar bv.  radiatoren of vloerverwarming die op hun beurt de ruimte opwarmen. Hiervoor is een gasleiding vereist.
+            -	Elektrische ketel:
+            Deze ketel bevat een elektrisch verwarmingselement zodat de opgewekte warmte gestuurd kan worden naar bv. radiatoren of vloerverwarming die op hun beurt de ruimte opwarmen.
+            
+        </div>
+    
+    <button type="button" class="collapsible">Zonnepanelen</button>
+    <div class="content">
+        <p>-	Daarnaast dient u nog aan te duiden of u al dan niet zonnepanelen heeft 
+            geïnstalleerd op uw dak. Indien dit niet het geval is, 
+            duiken we in de volgende stap dieper op wat het potentieel hiervan voor 
+            uw woning kan zijn.
+        </p>
+    </div>
+   
+    
+    
+    </div>
+    
+    
+    
+    <script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+    
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+    </script>
+
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="form">
+    <h1>{% block title %} Combisysteem {% endblock %}</h1>
+<form method="POST">
+    {{ form.csrf_token }}
+    <p> 
+        {{ form.combi.label }}
+        {{ form.combi(size=5, width = 50) }}
+    </p>
+
+    {% if form.combi.errors %}
+        <ul class="errors">
+            {% for error in form.combi.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p>
+        <input type="submit" value="Submit">
+    </p>
+
+
+{% endblock %}

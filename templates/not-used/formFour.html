@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div  class = "column" >
+    <h1> Zonneopbrengst</h1>
+<form method="POST">
+    {{ form.csrf_token }}
+
+    <p> 
+        {{ form.sizeB.label }}
+        {{ form.sizeB(size=5, width = 50) }}
+    </p>
+
+    {% if form.sizeB.errors %}
+        <ul class="errors">
+            {% for error in form.sizeB.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <p> 
+        {{ form.priceB.label }}
+        {{ form.priceB(size=5, width = 50) }}
+    </p>
+
+    {% if form.priceB.errors %}
+        <ul class="errors">
+            {% for error in form.priceB.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if PV == False%}
+        <p> 
+            {{ form.sizePV.label }}
+            {{ form.sizePV(size=5, width = 50) }}
+        </p>
+
+        {% if form.sizePV.errors %}
+            <ul class="errors">
+                {% for error in form.sizePV.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p> 
+            {{ form.pricePV.label }}
+            {{ form.pricePV(size=5, width = 50) }}
+        </p>
+
+        {% if form.pricePV.errors %}
+            <ul class="errors">
+                {% for error in form.pricePV.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {%endif%}
+
+    <p>
+        <input type="submit" value="Submit">
+    </p>
+</form>
+</div>
+
+</div>
+
+<div  class = "column" >
+    <h1> Uitleg </h1>
+</div>
+
+
+{% endblock %}

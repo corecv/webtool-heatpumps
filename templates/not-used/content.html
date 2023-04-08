@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/css/pdf.css">
+    <style>
+        
+    </style>
+
+
+</head>
+
+<body>
+
+    <h1>INHOUDSTAFEL:</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <td rowspan><h2>Huidige voorzieningen: </h2></td>
+            </tr>
+            {% for key, value in contentTable.items() %}
+            {%for k, v in value.items()%}
+                <tr>
+                    <td>Scenario {{nummer}}</td>
+                    <td>{% for a, b in dict1.items() %}
+                        <ol>
+                            <li>a:b</li>
+                        </ol>
+                        
+                        {% endfor %}</td>
+                    <td>{{co2}}</td>
+                    <td>{{tvt}}</td>
+                </tr>
+                {%endfor%} 
+            {%endfor%}
+        </tbody>
+    </table>
+    
+        
+
+
+</body>
+
+</html>

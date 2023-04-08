@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <div class="form">
+        <h1>{% block title %} Data ingeven {% endblock %}</h1>
+    <form method="POST" action="/">
+        {{ form.csrf_token }}
+        <p> 
+            <p>test tekst</p>
+            {{ form.RV.label }}
+            {{ form.RV(size=5, width = 50) }}
+        </p>
+
+        {% if form.RV.errors %}
+            <ul class="errors">
+                {% for error in form.RV.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            {{ form.SWW.label }}
+            {{ form.SWW(size=5) }}
+        </p>
+
+        {% if form.SWW.errors %}
+            <ul class="errors">
+                {% for error in form.SWW.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            {{ form.JaarStookolie.label }}
+            {{ form.JaarStookolie() }}
+        </p>
+
+        {% if form.JaarStookolie.errors %}
+            <ul class="errors">
+                {% for error in form.JaarStookolie.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+
+        <p>
+            {{ form.JaarAardgas.label }}
+            {{ form.JaarAardgas() }}
+        </p>
+
+        {% if form.JaarAardgas.errors %}
+            <ul class="errors">
+                {% for error in form.JaarAardgas.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            {{ form.JaarElec.label }}
+            {{ form.JaarElec() }}
+        </p>
+
+        {% if form.JaarElec.errors %}
+            <ul class="errors">
+                {% for error in form.JaarElec.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            {{ form.prijsStook.label }}
+            {{ form.prijsStook() }}
+        </p>
+
+        {% if form.prijsStook.errors %}
+            <ul class="errors">
+                {% for error in form.prijsStook.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            {{ form.prijsAardgas.label }}
+            {{ form.prijsAardgas() }}
+        </p>
+
+        {% if form.prijsAardgas.errors %}
+            <ul class="errors">
+                {% for error in form.prijsAardgas.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            {{ form.prijsElec.label }}
+            {{ form.prijsElec() }}
+        </p>
+
+        {% if form.prijsElec.errors %}
+            <ul class="errors">
+                {% for error in form.prijsElec.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            {{ form.opbrengstPV.label }}
+            {{ form.opbrengstPV() }}
+        </p>
+
+        {% if form.opbrengstPV.errors %}
+            <ul class="errors">
+                {% for error in form.opbrengstPV.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            {{ form.prijsPV.label }}
+            {{ form.prijsPV() }}
+        </p>
+
+        {% if form.prijsPV.errors %}
+            <ul class="errors">
+                {% for error in form.prijsPV.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+    </form>
+    </div>
+
+    {% if calculations_finished == True %}
+        <div class ="file">
+            <h1>Resultaten</h1>
+            <a href = "{{url_for('sendFile')}}">Download</a>
+        </div>
+        
+    {% endif %}
+
+{% endblock %}
+
