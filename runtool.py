@@ -17,20 +17,6 @@ def start():
 
     return render_template('start.html')
 
-# def userInputs():
-#     form = FormOne()
-
-#     if form.validate_on_submit():
-        
-#         if form.combi.data == "yes":
-            
-#             return redirect(url_for('formTwoA'))
-
-#         elif form.combi.data == "no": 
-
-#             return redirect(url_for('formTwoB'))
-
-#     return render_template('formOne.html', form=form,calculations_finished = False)
 
 @app.route("/gegevens", methods=('GET', 'POST'))
 def gegevens():
@@ -72,7 +58,6 @@ def formTwoA():
                 energy_sources.append(verbruikers.get(v.get('verbruiker')))
         session['verbruikers'] = energy_sources
 
-            
         if energy_sources:
             # redirect to the consumption form
             return redirect(url_for('consumption'))
@@ -131,9 +116,10 @@ def consumption():
         # verbruik = {source: getattr(form, source + '_consumption').data for source in energy_sources}
         # kost = {source: {"kost per kwh":getattr(form, source + '_prijs').data} for source in energy_sources}
         for source in energy_sources:
+            a = source.get('tokWh')
             s = source.get('naam')
-            verbruik[s] = getattr(form, s + '_consumption').data
-            kost[s] = {"kost per kwh":getattr(form, s + '_prijs').data}
+            verbruik[s] = getattr(form, s + '_consumption').data*a
+            kost[s] = {"kost per kwh":getattr(form, s + '_prijs').data/a}
         session['verbruik'] = verbruik
         session['kost'] = kost
         
@@ -148,28 +134,6 @@ def consumption():
     return render_template('consumption_form.html', form=form, PV=session.get("huidige voorzieningen").get('elektriciteit').get('PV'))
     
 
-# @app.route("/formFourA", methods=['GET', 'POST'])
-# def formFourA():
-#     form = FormFourA()
-#     if form.validate_on_submit():
-#         solarboiler = {'size':form.sizeB.data,'price':form.priceB.data}
-#         session['PV'] = {'PV':False,'size':0,'price':0}
-    
-        
-#         return redirect(url_for('calculate'))
-
-#     return render_template('formFour.html',form = form, PV = True)
-
-# @app.route("/formFourB", methods=['GET', 'POST'])
-# def formFourB():    
-#     form = FormFourB()
-#     if form.validate_on_submit():
-#         solarboiler = {'size':form.sizeB.data,'price':form.priceB.data}
-#         session['PV'] = {'PV':True,'size':form.sizePV.data,'price':form.pricePV.data}
-    
-#         return redirect(url_for('calculate'))
-
-#     return render_template('formFour.html',form = form, PV = False)
 
 @app.route("/generate_pdf")
 def generate_pdf():
@@ -201,12 +165,25 @@ def calculate():
     else:
         crit = "Q4"
     print("criteria",crit)
+    #hieronder nieuwe manier om via matrix de cop te bepalen
+    if a == "Radiatoren":
+        r = 0
+    else:
+        r = 1
+    if i == "Goed geisoleerd":
+        c = 0
+    elif i == "Matig geisoleerd":
+        c = 1
+    else:
+        c = 2
+    index = (r,c)
+
     scenariosf = scenarios
     # scenariosf = scenarioSelection(scenariolist=scenarios,crit = crit)
 
     
 
-    calc = main(toepass=toepassingen,huidigeVoorzieningen=session.get('huidige voorzieningen'),huidigverbruik=session.get('verbruik'),scenariosList=scenariosf,updateverbruikers=session.get("kost"),PV=session.get('PV'),inwoners=session.get("variables").get("inwoners"))
+    calc = main(toepass=toepassingen,huidigeVoorzieningen=session.get('huidige voorzieningen'),huidigverbruik=session.get('verbruik'),scenariosList=scenariosf,updateverbruikers=session.get("kost"),PV=session.get('PV'),inwoners=session.get("variables").get("inwoners"),COPindex=index)
     print("sessie!", session.get('PV'))
     pdf = generatePDF(calc[0],calc[1])
     session['file'] = pdf[0]
@@ -223,12 +200,12 @@ def results():
     table = []
     dict = session.get('graph')
     for i in range(len(dict)):
-        tabled = {"scenario":f'Scenario {i+1}',"voorziening":dict[i].get('profiel').get('ruimteverwarming'),"CO2abs":dict[i].get('co2abs'),"CO2perc":dict[i].get('co2'),"prim":dict[i].get('primaire'),"primP":dict[i].get('primaireP'),'kost':dict[i].get('kost'),'kostP':dict[i].get('kostP')}
+        tabled = {"scenario":f'Scenario {i+1}',"voorziening":dict[i].get('profiel').get('ruimteverwarming'),"CO2abs":dict[i].get('co2abs'),"CO2perc":dict[i].get('co2'),"prim":dict[i].get('primaire'),"primP":dict[i].get('primaireP'),'kost':dict[i].get('kost'),'kostP':dict[i].get('kostP'),'investering':dict[i].get('investering')}
         dataset = {
             'label': f'Scenario {i+1}',
             'data': [dict[i].get('co2'),dict[i].get('primaireP'),dict[i].get('kostP')],
-            'backgroundColor': f'rgba({i*50}, {i*100}, {i*150}, 0.2)',
-            'borderColor': f'rgba({i*50}, {i*100}, {i*150}, 1)',
+            'backgroundColor': f'rgba({(i)*100}, {(i)*150}, {(i)*90}, 0.2)',
+            'borderColor': f'rgba({i*0}, {i*0}, {i*0}, 1)',
             'borderWidth': 1,
             'stack': i-1 
         }
@@ -236,22 +213,6 @@ def results():
         table.append(tabled)
 
  
-    
-    # table = [dict.get('profiel') for dict in session.get('graph')]
-            
-    # for i in range(len(num_datasets)):
-    #     dataset = {
-    #         'label': f'Scenario {i+1}',
-    #         'data': [num_datasets[i][0],num_datasets[i][1],num_datasets[i][2]],
-    #         'backgroundColor': f'rgba({i*50}, {i*100}, {i*150}, 0.2)',
-    #         'borderColor': f'rgba({i*50}, {i*100}, {i*150}, 1)',
-    #         'borderWidth': 1,
-    #         'stack': i-1 
-    #     }
-    #     data.append(dataset)
-
-    
-  
 
     return render_template('results.html', labels = labels, datasets=data,table=table)
 

@@ -21,10 +21,12 @@
     
         
             {% for key, value in dict1.items() %}
-                <tr >
-                    <td>{{key }}</td>
-                    <td>{{value}}</td>
-                </tr>
+                {%if key != "nr" %}
+                    <tr >
+                        <td>{{key }}</td>
+                        <td>{{value}}</td>
+                    </tr>
+                {%endif%}
             {% endfor %}
             <tr class = "empty"><td></td><td></td></tr>
 

@@ -5,62 +5,69 @@
         <title>Chart.js Bar Chart - Stacked</title>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
-
     <body>
-        <div>
-            <canvas id="myChart"></canvas>
-        </div>
-      <script>
-        const ctx = document.getElementById('myChart');
-        const labels = {{labels | tojson}};
+    <p>De grafiek toont een procentuele besparingen tussen de/het aangeraden scenario('s) en de huidige situatie.
+        Dus een staaf met een hoogte van 60% betekend een besparing van 60% in de overeenkomstige categorie t.o.v. de huidige situatie
+    </p>
+    
+        <canvas id="myChart" style="width:100%;height:100%"></canvas>
+    
+    </div>
+        <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+        // const labels = {{labels | tojson}};
         const data = {
-                labels: labels,
+                labels: {{labels | tojson}},
                 datasets: {{datasets | tojson}}
-                // [
-                //     {
-                //         label: 'Situatie 1',
-                //         data: [10,5],
-                //         backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                //         borderColor: 'rgba(255, 99, 132, 1)',
-                //         borderWidth: 1,
-                //         stack: 'Stack 0'
-                //     },
-                //     {
-                //         label: 'Situatie 2',
-                //         data: [5,11],
-                //         backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                //         borderColor: 'rgba(54, 162, 235, 1)',
-                //         borderWidth: 1,
-                //         stack: 'Stack 1'
-                //     }
-                // ]
             };
-    const config = {
+            
+        const config = {
             type: 'bar',
             data: data,
             options: {
                 plugins: {
-                title: {
-                    display: true,
-                    text: 'Chart.js Bar Chart - Stacked'
-                        },
-                    },
-                responsive: true,
-                interaction: {
-                intersect: false,
+                    legend: {
+                    labels: {
+                        // This more specific font property overrides the global property
+                        font: {
+                            size: 25
+                        }}},
+                    
+                 
+                    title: {
+                            display: true,
+                            text: 'Vergelijking met de huidige situatie',                            
+                            font: {
+                                size: 20
+                                                }
+                                },
                             },
-                scales: {
-                x: {
-                    stacked: true,
-                    },
-                y: {
-                    stacked: true
+                    responsive: true,
+                    interaction: {
+                    intersect: false,
+                            },
+                    scales: {
+                       
+                        y: {display:true,
+                        stacked: true,
+                            title:
+                                {
+                                display:true,
+                                text:"Besparing t.o.v. huidige situatie[%]",
+                                font: {
+                                        size: 20
+                                        }
+                    
+                                },
+                   
                     }
-                        }
+                        },
+    
                     }
                 };
+    
         new Chart(ctx, config);
-
-      </script>
+    
+        </script>
     </body>
 </html>

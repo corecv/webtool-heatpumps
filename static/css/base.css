@@ -16,20 +16,24 @@
     
     /* Style the font of the body */
     body {
-      font-family: Verdana;
+      font-family: Montserrat,sans-serif;
       height:100%;
       padding:0;
       margin: 0;
-      /* background-image: linear-gradient(to bottom right,rgba(94, 149, 94, 0.363),rgb(255, 255, 255)); */
+      font-size: 16px;
+      height: 100%;
+      line-height: 1.5;
     }
 
     h1{
-      font-size:100% ;
-      font-weight:bold
+      font-size:inherit;
+      font-weight:bold;
+
     }
     h2{
       font-size: 100%;
-      font-weight:normal
+      font-weight:normal;
+      
     }
 
     h3{
@@ -41,7 +45,16 @@
       font-size: 100%;
     
     }
+.page_title{
+  font-weight:bold;
+  font-family: inherit;
+  font-size: 150%;
+  background-color: rgba(107, 180, 186, 0.776);
+  width:100%;
+  color:white;
+  padding-left: 20px;
 
+}
 /* stylings of the header */
 
     /* Header/logo Title */
@@ -64,8 +77,11 @@
       width: 20%;
       height: 70%;
       display: block;
+      object-fit: contain;
         
     }
+
+
 
     
     /* Column container */
@@ -88,13 +104,7 @@
     .form{flex: 50%}
     .file{flex: 50%}
     .form h1,h2{font-size: 200%;}
-    
-    /* Create two unequal columns that sits next to each other */
-    /* Sidebar/left column */
   
-     
-
-
     /* Main column */
     .main {
       flex: 100%;
@@ -137,6 +147,8 @@
     }
 
     .collapsible {
+      font-family: inherit;
+
   background-color: #777;
   color: white;
   cursor: pointer;
@@ -148,7 +160,7 @@
   font-size: 15px;
 }
 
-.active, .collapsible:hover {
+.active, .collapsible:hover, .form-hover:hover {
   background-color: #555;
 }
 
@@ -161,7 +173,9 @@
 
 
 input[type=submit] {
-  font-size: 100%;
+  font-family: inherit;
+  font-weight:bold;
+  font-size: 150%;
   background-color: rgba(107, 180, 186, 0.776);
   border: none;
   color: white;
@@ -170,6 +184,20 @@ input[type=submit] {
   margin: 4px 2px;
   cursor: pointer;
 }
+
+.submit{  
+  font-size: 150%;
+  font-family: inherit;
+  background-color: rgba(107, 180, 186, 0.776);
+  font-weight:bold;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;}
+
+
 
 
 .tab { margin-left: 40px; }

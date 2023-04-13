@@ -1,11 +1,12 @@
 from forms import *
 from flask import render_template
-from data import warmtepomp_LW, warmtepomp_GW,warmtepomp_WW,warmtepomp_LL,warmtepomp_HY,condensatieketels,doorstroomboilersE,zonneboilers,warmtepompboiler, elektriciteit_net, verbruikers,toepassingen,insertCSV,cvKetel_gas,SLPs,scenarios
+from data import warmtepomp_LW, warmtepomp_GW,warmtepomp_WW,warmtepomp_LL,warmtepomp_HY,elektriciteit_net, verbruikers,toepassingen,cvKetel_gas,SLPs,scenarios
 from flask_weasyprint import HTML
 from pypdf import PdfMerger
 from io import BytesIO
 import math 
 from matplotlib import pyplot as plt
+import numpy as np
 
 import pandas as pd
 
@@ -16,7 +17,7 @@ import pandas as pd
 #DIMENSIONERING VAN NIEUWE VOORZIENINGEN
 ================================================================================
 '''
-def dimensionering(voorziening,vraag):  
+def dimensionering(voorziening,totvraag,insulation):  
     """
     Functie om de nieuwe warmtepomp te dimensioneren. 
     gebeurd op basis van piekvraag doorheen het jaar
@@ -25,6 +26,10 @@ def dimensionering(voorziening,vraag):
         - vraag: piekvraag in kwh
     return: de dictionary van de correct gedimensioneerde warmtepomp 
     """
+    loadh = [1500,1700,2000]
+    h = loadh[insulation]
+    vraag = totvraag/h
+
 
     newvoorziening = {}
     if voorziening  == "warmtepomp LW":
@@ -93,36 +98,32 @@ def dimensionering(voorziening,vraag):
             newvoorziening = warmtepomp_HY[4]
         else:
             print("HY vermogen not in range")
-    elif voorziening  == "condensatieketel":
-        if vraag <= 13:
-            newvoorziening = condensatieketels[0]
-        elif vraag > 13 and vraag <= 20:
-            newvoorziening = condensatieketels[1]
-        elif vraag > 20 and vraag <= 30:
-            newvoorziening = condensatieketels[2]
-        elif vraag > 30 and vraag <= 50:
-            newvoorziening = condensatieketels[3]
-        elif vraag > 50 and vraag <= 80:
-            newvoorziening = condensatieketels[4]
-        elif vraag > 80:
-            newvoorziening = condensatieketels[5]
-        else:
-            print("condensatieketel dimensionering mislukt")
-    
-    elif voorziening  == "doorstroomboiler elektrisch":
-        if vraag <= 5:
-            newvoorziening = doorstroomboilersE[0]
-        elif vraag > 5:
-            newvoorziening = doorstroomboilersE[1]
-        else:
-            print("doorstroomboiler dimensionering mislukt")
 
     elif voorziening == "elektriciteitsnet":
         newvoorziening = elektriciteit_net
 
-    elif voorziening == "zonneboiler":  #adhv zonnekaart vlaanderen 
-        print("zonneboiler dimensionering mislukt")
+    elif voorziening == "Gasketel":
+        newvoorziening = cvKetel_gas
+
     return newvoorziening
+
+def dimensionering2(vraag,insulation):  
+    """
+    Functie om de nieuwe warmtepomp te dimensioneren. 
+    gebeurd op basis van piekvraag doorheen het jaar
+    input:
+        - voorziening: naam van de nieuwe voorziening eg: "warmtepomp LW"
+        - vraag: piekvraag in kwh
+    return: de dictionary van de correct gedimensioneerde warmtepomp 
+    """
+    newvoorziening = {}
+    loadh = [1500,1700,2000]
+    h = loadh[insulation]
+    dimension = vraag/h
+
+
+
+    return dimension
 
 def scenarioSelection(scenariolist,crit):
     """
@@ -140,6 +141,18 @@ def scenarioSelection(scenariolist,crit):
             continue
     return finalScen
 
+def selectCOP(index,matrix):
+    #index is een tuple afkomstig van runtool, based on isolatiegraad en afgiftesysteem
+    #matrix is de lijst met 2 lijsten die als matrix dient om de verschillende cop waardes in te geven
+    cop = 0.0
+    if type(matrix) == list:
+        r = index[0]
+        c = index[1]
+        cop = matrix[r][c]
+    else:
+        cop = matrix
+
+    return cop
 
 """
 ================================================================================
@@ -158,28 +171,37 @@ def verbruikProfiel(totverbruik,verbruiksprofiel):
     profiel = [i*totverbruik for i in verbruiksprofiel]
     return profiel
 
-def nieuweVoorzieningen(scenario,toepassingen,huidigprof):  
+def nieuweVoorzieningen(scenario,toepassing,huidigprof,index):  
     """#deze functie wordt doorlopen door alle scenarios die meegegeven worden en bepaalt daaruit welke de nieuwe voorzieningen worden die vergelekenn gaan worden met de huidige situatie"""
-    nieuwevoorzieningen = {} #per toepassing een nieuwe voorziening, als None in scenario, skip it
-    for toepassing in toepassingen:
-        if toepassing in nieuwevoorzieningen.keys():
-            continue
-        else:
-            a = scenario.get(toepassing)  #de nieuwe voorziening voor toepassing i 
-            if list(scenario.values()).count(a) == 1: 
+    # nieuwevoorzieningen = {} #per toepassing een nieuwe voorziening, als None in scenario, skip it
+    # for toepassing in toepassingen:
+    #     if toepassing in nieuwevoorzieningen.keys():
+    #         continue
+        # else:
+    a = scenario.get(toepassing)  #de nieuwe voorziening voor toepassing i 
+    if list(scenario.values()).count(a) == 1: 
                 maxvraag = (huidigprof.get("dictVoorzieningen").get(toepassing).get('maxvraag'))*4  #maal 4 om kwkwartier om te zetten naar kWh
-                nieuwVoorziening = dimensionering(a,maxvraag)
-                d = {toepassing:nieuwVoorziening}
-                nieuwevoorzieningen.update(d)
-            elif list(scenario.values()).count(a) > 1:
+                vraag = huidigprof.get("dictVoorzieningen").get(toepassing).get('totvraag')
+                nieuwVoorziening = dimensionering(a,vraag,insulation = index[1])
+                dimension = dimensionering2(huidigprof.get("dictVoorzieningen").get(toepassing).get('totvraag'),index[1])
+                eff = {"efficientie":selectCOP(index = index,matrix = nieuwVoorziening.get('efficientie'))}
+                nieuwVoorziening.update(eff)
+                # d = {toepassing:nieuwVoorziening}
+                # nieuwevoorzieningen.update(d)
+
+    elif list(scenario.values()).count(a) > 1:
                 zelfdevoorziening = [k for k,v in scenario.items() if v == a]  #lijst met alle namen van toepassingen die dezelfde voorziening gebruiken
-                vraag = [(huidigprof.get("dictVoorzieningen").get(i).get('maxvraag'))*4 for i in zelfdevoorziening]      #maal 4 om kwkwartier om te zetten naar kWh
-                nieuwVoorziening = dimensionering(a,sum(vraag))
-                d = {zelfdevoorziening[i]:nieuwVoorziening for i in range(len(zelfdevoorziening))}
-                nieuwevoorzieningen.update(d)
+                vraag = [(huidigprof.get("dictVoorzieningen").get(i).get('totvraag'))*4 for i in zelfdevoorziening]      #maal 4 om kwkwartier om te zetten naar kWh
+                nieuwVoorziening = dimensionering(a,sum(vraag),insulation = index[1])
+                dimension = dimensionering2(huidigprof.get("dictVoorzieningen").get(toepassing).get('totvraag'),index[1])
 
 
-    return nieuwevoorzieningen
+                eff = {"efficientie":selectCOP(index = index,matrix = nieuwVoorziening.get('efficientie'))}
+                nieuwVoorziening.update(eff)
+                # d = {zelfdevoorziening[i]:nieuwVoorziening for i in range(len(zelfdevoorziening))}
+                # nieuwevoorzieningen.update(d)
+                print('\n',"Dimensionering met nieuwe methode: kwh",vraag,toepassing,dimension,'\n')
+    return nieuwVoorziening
 
 def verbruikverdeling(verbruik,pers, huidigevoorziening): #verbruik is een dictionary met elke verbruiker en het verbruik, Swwvraag is een input, huidigevoorziening is een dict van de huidige voorzieningen per toepassing
     volumevraagSWW = 40.71*pers*365
@@ -237,13 +259,7 @@ def energieVraag(efficientie,huidigVraagProfiel):
  
 def nieuwVerbruik(voorziening,huidigVraagProfiel,COP,variableEff,aandeel,oudverbruik):
     """nieuw verbruik voor nieuwe voorziening op basis van het vraagprofiel, de nieuwe voorziening en al dan niet een variabele efficientie"""
-    # variable = voorziening.get("varEff")
-    # efficientie = voorziening.get("efficientie")
-    # print(variableEff)
-    # print(eff)
 
-
-    # if voorziening.get('naam') != "hybride Warmtepomp":
     if aandeel != None:
             newdict = {}
             if variableEff != None:
@@ -258,9 +274,9 @@ def nieuwVerbruik(voorziening,huidigVraagProfiel,COP,variableEff,aandeel,oudverb
                 verbruikC = [(aandeel*i)/COP for i in huidigVraagProfiel]
             else:
                 print("nieuw verbruik berekenen failed")
-            newdict[list(oudverbruik)[0]] = list(oudverbruik.values())[0]*aandeel
+            newdict[list(oudverbruik)[0]] = list(oudverbruik.values())[0]*(1-aandeel)
             newdict[voorziening.get("verbruiker")] = sum(verbruik)
-            return {"variabel":{"profiel":verbruik,"verbruik":newdict ,"constant":{"profiel":verbruikC,"totaal":sum(verbruikC)}}}
+            return {"variabel":{"profiel":verbruik,"verbruik":newdict },"constant":{"profiel":verbruikC,"totaal":sum(verbruikC)}}
 
     elif aandeel == None:
             if variableEff != None:
@@ -274,7 +290,7 @@ def nieuwVerbruik(voorziening,huidigVraagProfiel,COP,variableEff,aandeel,oudverb
                         verbruikC = [i/COP for i in huidigVraagProfiel]
             else:
                         print("nieuw verbruik berekenen failed")
-            return {"variabel":{"profiel":verbruik,"verbruik":{voorziening.get("verbruiker"):sum(verbruik)},"constant":{"profiel":verbruikC,"totaal":sum(verbruikC)}}}
+            return {"variabel":{"profiel":verbruik,"verbruik":{voorziening.get("verbruiker"):sum(verbruik)}},"constant":{"profiel":verbruikC,"totaal":sum(verbruikC)}}
     
 """
 ================================================================================
@@ -347,10 +363,6 @@ def cashandpayback(oudverbruik, nieuwverbruik,investering):
     years = len(cashflow)
     return [cashflow, years]
 
-
-
-
-
 def investering(nieuwlist):
     investList = []
     for v in nieuwlist.values():
@@ -395,8 +407,8 @@ def huidigProfiel(toepassingen,huidigevoorzieningen, huidigverbruik, slps):
         # newDict['verbruikprofiel'] = verbruikProfiel(verbruik,slp)  #verbruik dat de toepassing vraagt, per kwartier op een jaar
         newDict['totverbruik'] = {verbruiker:verbruik} #{verbruiker:sum(newDict.get('verbruikprofiel'))} #totaal verbruik dat de toepassing verbruikt op een jaar
         # newDict['energievraag'] = energieVraag(voorziening.get('efficientie'),newDict.get('verbruikprofiel'))  #per kwartier de vraag berekenen die de toepassing nodig heeft afhankelijk van de huidige efficientie, op basis hiervan kan het verbruik van de nieuwe voorziening met een nieuwe efficientie berekent worden 
-        newDict['vraag'] = energieVraag(voorziening.get('efficientie'),verbruik)  #per kwartier de vraag berekenen die de toepassing nodig heeft afhankelijk van de huidige efficientie, op basis hiervan kan het verbruik van de nieuwe voorziening met een nieuwe efficientie berekent worden 
-        newDict['energievraag'] = verbruikProfiel(newDict.get('vraag'),slp)  #verbruik dat de toepassing vraagt, per kwartier op een jaar
+        newDict['totvraag'] = energieVraag(voorziening.get('efficientie'),verbruik)  #per kwartier de vraag berekenen die de toepassing nodig heeft afhankelijk van de huidige efficientie, op basis hiervan kan het verbruik van de nieuwe voorziening met een nieuwe efficientie berekent worden 
+        newDict['energievraag'] = verbruikProfiel(newDict.get('totvraag'),slp)  #verbruik dat de toepassing vraagt, per kwartier op een jaar
 
         # newDict['totale energievraag'] = sum(newDict.get('energievraag'))
         newDict['maxvraag'] = max(newDict.get('energievraag'))  #per kWkwartier!
@@ -451,36 +463,52 @@ def huidigProfiel(toepassingen,huidigevoorzieningen, huidigverbruik, slps):
 DICTIONARY VAN NIEUW PROFIEL GENEREREN
 ================================================================================
 """
-def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV):
+def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
     print("")
     print("##################################################################################")
-    print("NIEUW PROFIEL GENEREREN")
-    nieuwevoorzienigen = nieuweVoorzieningen(scenario=scenario,toepassingen=toepassingen,huidigprof=huidigprof)
-    
+    print("NIEUW PROFIEL GENEREREN",scenario)
+
     dictVoorzieningen = {}
+
+
+    nieuwevoorzienigen = {}
+    for toepassing in toepassingen:
+            nieuwevoorzienigen[toepassing] = nieuweVoorzieningen(scenario=scenario,toepassing=toepassing,huidigprof=huidigprof,index = index)
+            print('+++++++++++++++++++++++++++++++++++++',toepassing,nieuwevoorzienigen.get((toepassing)).get('naam'))
+
+
+
+    # nieuwevoorzienigen = nieuweVoorzieningen(scenario=scenario,toepassingen=toepassingen,huidigprof=huidigprof,index = index)
+    
+   
+
 
     print("     NIEUWE VOORZIENINGEN zonder PV") if calcPV == False else print("     NIEUWE VOORZIENINGEN met PV")
     for i in range(len(toepassingen)):
         newDict = {}
-        voorziening = nieuwevoorzienigen.get(toepassingen[i])
-        energievraag = huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('energievraag')
-        newDict['voorziening'] = voorziening
-        print(toepassingen[i],voorziening.get('naam'))
-        nieuwCons = nieuwVerbruik(voorziening,energievraag,COP=voorziening.get("efficientie"),variableEff=voorziening.get("varEff"),aandeel = voorziening.get("aandeel"),oudverbruik=huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('totverbruik'))
-        newDict['verbruik'] = nieuwCons.get("variabel")
-        newDict['verbruikConstant'] = nieuwCons.get("constant")
-        newDict['totverbruik'] = newDict.get('verbruik').get('verbruik')
-        newDict['totverbruikConstant'] = newDict.get('verbruik').get('constant').get('totaal')
-        newDict['co2'] = co2(newDict.get('verbruik').get('verbruik'))
-        newDict["verbruikskost"] = verbruikskost(newDict.get('totverbruik'))
-        newDict['primaire energie'] = primaireE(verbruik = newDict.get('totverbruik'))
-                
-        update = {toepassingen[i]:newDict}
-        dictVoorzieningen.update(update)
-        print("verbruik per toepassing---------------------------------------:",toepassingen[i],"\n",
-              "variabele COP", newDict.get("totverbruik"),"\n",
-              "constante COP",newDict.get("totverbruikConstant")
-              )
+        if huidigprof.get("dictVoorzieningen").get(toepassingen[i]).get('voorziening').get('naam') == scenario.get(toepassingen[i]):
+            update = {toepassingen[i]:huidigprof.get("dictVoorzieningen").get(toepassingen[i])}
+            dictVoorzieningen.update(update)
+        else:   
+            voorziening = nieuwevoorzienigen.get(toepassingen[i])
+            energievraag = huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('energievraag')
+            newDict['voorziening'] = voorziening
+            print(toepassingen[i],voorziening.get('naam'))
+            nieuwCons = nieuwVerbruik(voorziening,energievraag,COP=voorziening.get("efficientie"),variableEff=voorziening.get("varEff"),aandeel = voorziening.get("aandeel"),oudverbruik=huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('totverbruik'))
+            newDict['verbruik'] = nieuwCons.get("variabel")
+            newDict['verbruikConstant'] = nieuwCons.get("constant")
+            newDict['totverbruik'] = newDict.get('verbruik').get('verbruik')
+            newDict['totverbruikConstant'] = nieuwCons.get('constant').get('totaal')
+            newDict['co2'] = co2(newDict.get('verbruik').get('verbruik'))
+            newDict["verbruikskost"] = verbruikskost(newDict.get('totverbruik'))
+            newDict['primaire energie'] = primaireE(verbruik = newDict.get('totverbruik'))
+                    
+            update = {toepassingen[i]:newDict}
+            dictVoorzieningen.update(update)
+            print("verbruik per toepassing---------------------------------------:",toepassingen[i],"\n",
+                "variabele COP", newDict.get("totverbruik"),"\n",
+                "constante COP",newDict.get("totverbruikConstant")
+                )
 
     
 
@@ -498,6 +526,7 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV):
                                     for k in nieuwprofiel.get('dictVoorzieningen')
                                     }
     verbruikDict = {}
+    print(nieuwprofiel.get('voorzieningen'))
 
     print("     NIEUW VERBRUIK BEREKENEN")
    
@@ -608,7 +637,7 @@ def callComparison(listScenarios, profiel,PV,nieuweProfiel):
     comp = []
     dict1 = {}
     dict2 = {}
-    print("=== vergelijking nieuwprofiel met huidig profiel voor:",listScenarios.get('scenario'),listScenarios.get('ruimteverwarming'),'===')
+    print("=== vergelijking nieuwprofiel met huidig profiel voor:",listScenarios.get('scenario'),listScenarios.get('ruimteverwarming'),listScenarios.get('sanitair warm water'),listScenarios.get('elektriciteit'),'===')
     print("")
     vgl = profileComparison(profiel,nieuweProfiel[0])
     print(vgl)
@@ -636,7 +665,7 @@ code oproepen
 ================================================================================
 """
 
-def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbruikers,PV,inwoners):
+def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbruikers,PV,inwoners,COPindex):
     #data in verbruikers update (persoonlijke kostprijs per kwh bijvoorbeeld)
     for k,v in updateverbruikers.items():
         verbruikers.get(k).update(v)
@@ -664,9 +693,9 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
     nieuweProfielList = []
     for i in range (len(scenariosList)): #elk scenario in de lijst  van scenarios doorlopen, een nieuw profiel maken en dit nieuw profiel vergelijken met het huidige profiel en de vergelijking opslaan in een list 
         list = []    
-        nieuwProf = nieuwProfiel(toepassingen = toepass,scenario = scenariosList[i],huidigprof= huidigProf,calcPV = False,PV=PV)
+        nieuwProf = nieuwProfiel(toepassingen = toepass,scenario = scenariosList[i],huidigprof= huidigProf,calcPV = False,PV=PV,index=COPindex)
         list.append(nieuwProf)
-        nieuwProfPV = nieuwProfiel(toepassingen = toepass,scenario = scenariosList[i],huidigprof= huidigProf,calcPV = True,PV=PV)
+        nieuwProfPV = nieuwProfiel(toepassingen = toepass,scenario = scenariosList[i],huidigprof= huidigProf,calcPV = True,PV=PV,index=COPindex)
         list.append(nieuwProfPV)
         nieuweProfielList.append(list)
     print("")
@@ -686,91 +715,33 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
     #data voor de grafieken apart verzamelen
     graph_data = []
     for i in range(len(sortedList)):
+        vgl = sortedList[i][0].get('vgl')
         data = {}
         data['profiel'] = sortedList[i][0].get('profiel').get('voorzieningen')
         data.get('profiel')["nr"] = i+1
-        data['co2abs'] = round(sortedList[i][0].get('vgl').get('CO2 besparing'))
-        data["co2"] = round(sortedList[i][0].get('vgl').get('CO2 besparing perc'))
-        data["primaire"] = round(sortedList[i][0].get('vgl').get("besparing primaire energie"))
-        data["primaireP"] = round(sortedList[i][0].get('vgl').get("besparing primaire energie perc"))
-        data["kostP"] = round(sortedList[i][0].get('vgl').get("totale kostbesparing perc"))
-        data["kost"] = round(sortedList[i][0].get('vgl').get("totale kostbesparing"))
+        data['co2abs'] = round(vgl.get('CO2 besparing'))
+        data["co2"] = round(vgl.get('CO2 besparing perc'))
+        data["primaire"] = round(vgl.get("besparing primaire energie"))
+        data["primaireP"] = round(vgl.get("besparing primaire energie perc"))
+        data["kostP"] = round(vgl.get("totale kostbesparing perc"))
+        data["kost"] = round(vgl.get("totale kostbesparing"))
+        data['investering'] = sortedList[i][0].get('profiel').get('investering')
 
         graph_data.append(data)
         print("xxxxx", graph_data)
-
-    return  [sortedList,huidigProf,graph_data]
-
-"""
-=== TESTFUNCTIE ===
-"""
-"""Deze functie dient om deze code te runnen zonder heel de webpagina te openen"""
-
-
-
-def test(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbruikers,PV,inwoners):
-    #data in verbruikers update (persoonlijke kostprijs per kwh bijvoorbeeld)
-    for k,v in updateverbruikers.items():
-        verbruikers.get(k).update(v)
-
-    #het verbruik verdelen over de verschillende toepassingen
-    verbruikdiv = verbruikverdeling(verbruik = huidigverbruik, pers = inwoners,huidigevoorziening=huidigeVoorzieningen) #
-    print("")
-    print("#######################################")
-    print("VERBRUIKVERDELING", verbruikdiv)
-    print("#######################################")
-    print("")
-
-    #huidig profiel maken
-    huidigProf = huidigProfiel(toepassingen = toepass, huidigevoorzieningen=huidigeVoorzieningen,slps=SLPs,huidigverbruik=verbruikdiv)
-    
-
-    print("")
-
-    print("#######################################")
-    print("NIEUWE PROFIELEN GENEREREN")
-    print("#######################################")
-    print("")
-
-    #lijst  van nieuwe profielen op basis van de nieuwe scenarios 
-    nieuweProfielList = []
-    for i in range (len(scenariosList)): #elk scenario in de lijst  van scenarios doorlopen, een nieuw profiel maken en dit nieuw profiel vergelijken met het huidige profiel en de vergelijking opslaan in een list 
-        list = []    
-        nieuwProf = nieuwProfiel(toepassingen = toepass,scenario = scenariosList[i],huidigprof= huidigProf,calcPV = False,PV=PV)
-        list.append(nieuwProf)
-        nieuwProfPV = nieuwProfiel(toepassingen = toepass,scenario = scenariosList[i],huidigprof= huidigProf,calcPV = True,PV=PV)
-        list.append(nieuwProfPV)
-        nieuweProfielList.append(list)
-    print("")
-    print("#######################################")
-    print("NIEUWE PROFIELEN MET HUIDIGE VERGELIJKEN")
-    print("#######################################")
-    print("")
-    #lijst  van vergelijkingen tussen huidig profiel en nieuwe profielen
-    listVGL = []
-    for i in range (len(nieuweProfielList)): #elk scenario in de lijst  van scenarios doorlopen, een nieuw profiel maken en dit nieuw profiel vergelijken met het huidige profiel en de vergelijking opslaan in een list 
-        comparison = callComparison(listScenarios = scenariosList[i],profiel= huidigProf,PV=PV,nieuweProfiel=nieuweProfielList[i])
-        listVGL.append(comparison) #[comp1, comp2, comp3...]
-    
-        
-
-    #lijst sorteren op meeste CO2 besparing in scenario zonder PV
-    sortedList = sorted(listVGL, key=lambda i: i[0].get('vgl').get('CO2 besparing perc'),reverse=True)
-    
-    #data voor de grafieken apart verzamelen
-    graph_data = []
     
     for i in range(len(sortedList)):
+        vgl = sortedList[i][0].get('vgl')
         data = {}
         data['profiel'] = sortedList[i][0].get('profiel').get('voorzieningen')
         data.get('profiel')["nr"] = i+1
-        data['co2abs kg CO2'] = round(sortedList[i][0].get('vgl').get('CO2 besparing'))
-        data["co2 %"] = round(sortedList[i][0].get('vgl').get('CO2 besparing perc'))
-        data["primaire kWh"] = round(sortedList[i][0].get('vgl').get("besparing primaire energie"))
-        data["primaireP %"] = round(sortedList[i][0].get('vgl').get("besparing primaire energie perc"))
-        data["kostP %"] = round(sortedList[i][0].get('vgl').get("totale kostbesparing perc"))
-        data["kost €"] = round(sortedList[i][0].get('vgl').get("totale kostbesparing"))
-        data["tvt [jaar]"] = (sortedList[i][0].get('vgl').get("tvt"))
+        data['co2abs kg CO2'] = round(vgl.get('CO2 besparing'))
+        data["co2 %"] = round(vgl.get('CO2 besparing perc'))
+        data["primaire kWh"] = round(vgl.get("besparing primaire energie"))
+        data["primaireP %"] = round(vgl.get("besparing primaire energie perc"))
+        data["kostP %"] = round(vgl.get("totale kostbesparing perc"))
+        data["kost €"] = round(vgl.get("totale kostbesparing"))
+        data["tvt [jaar]"] = (vgl.get("tvt"))
         
         print("")
         print("*")
@@ -780,18 +751,17 @@ def test(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
         for key, value in data.items():
             print(key, value)
 
-
     return  [sortedList,huidigProf,graph_data]
 
+"""
+=== TESTFUNCTIE ===
+"""
+"""Deze functie dient om deze code te runnen zonder heel de webpagina te openen"""
 huidig = {"ruimteverwarming":cvKetel_gas,"sanitair warm water":cvKetel_gas,"elektriciteit":elektriciteit_net}
 cons = {"aardgas":20000,"elektriciteit":4000}
 kos = {"aardgas":{"kost per kwh":0.3},"elektriciteit":{"kost per kwh":0.4}}
-testfunct = test(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4)
+testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(0,1))
 
-
-"""===TESTSCENARIO OM DEZE CODE TE TESTEN"""
-#uncommonent onderstaande lijn om de functie test() te runnen, resultaten worden geprint
-# test()
 
 """========================================"""
 
@@ -814,6 +784,8 @@ def generatePDF(list,huid):
     #    {"name":"Elektriciteit","Verbruik":20,"CO2": 3000,"cost":800}
 
     # ]
+    gdatahuidig = {1:round(huidig.get('totale verbruikskost')),2:round(huidig.get('primaire energie')),3:round(huidig.get('co2'))}
+
     firstPageVar = {
         "dict1":dict1,"dict2":dict2,
         "var1":round(huidig.get('totale verbruikskost')),
@@ -830,6 +802,9 @@ def generatePDF(list,huid):
 
     for comp in list:
         print("newcomp")
+        co2 = [round(huidig.get('co2'))]
+        kost = [round(huidig.get('totale verbruikskost'))]
+        primE = [round(huidig.get('primaire energie'))]
         for dict in comp:
             new = dict.get('profiel')
             vgl = dict.get('vgl')
@@ -839,6 +814,7 @@ def generatePDF(list,huid):
             dict2 = {k:round(new.get('verbruik').get(k)) for k in new.get('verbruik')}
             dict3 = {k:-1*round(vgl.get('besparing verbruik').get(k)) for k in vgl.get('besparing verbruik')}
             number = list.index(comp) + 1 
+            print(dict1)
                        
             var = {
                 "name": new.get('voorzieningen').get('ruimteverwarming'),
@@ -853,29 +829,41 @@ def generatePDF(list,huid):
                 "var5":round(vgl.get("besparing primaire energie perc")),
                 "var6":round(vgl.get("CO2 besparing perc")),
                 "var7":round(new.get("investering")),
-                "var8":str(str(str(vgl.get('tvt')[0]) + " jaar en ") + str(str(vgl.get('tvt')[1]))) + " maanden"
-
+                "var8":str(str(str(vgl.get('tvt')) + " jaar"))
             }
-            a = {"dict1":dict1,"nummer":var.get("number"),"co2":var.get("var6"),"tvt":var.get("var8")}
-            nummer = "scenario" + str(var.get('number'))
-            contentTable[nummer] = a
+            co2.append(round(new.get('co2')))
+            kost.append(round(new.get('totale verbruikskost')))
+            primE.append(round(new.get('primaire energie')))
 
             template = 'pdfNieuwScenario.html' if type(vgl.get('PV')) == str else 'pdfNieuwScenarioMetPV.html'
 
             nieuw_pdf = render_template(template, **var)
             generated_pdfnieuw = HTML(string=nieuw_pdf).write_pdf()
             pdf_file_like1 = BytesIO(generated_pdfnieuw)
-            merger.append(pdf_file_like1)    
- 
-    # content = render_template("content.html", **contentTable)
-    # generated_pdfcontent = HTML(string=content).write_pdf()
-    # pdf_file_content = BytesIO(generated_pdfcontent)
-    # merger.merge(page_number = 3, fileobj = pdf_file_content)  
+            merger.append(pdf_file_like1)
+
+        fig = chartimg(co2,kost,primE)
+        merger.append(BytesIO(fig))
 
     frontpage = open("static\pdf files\Voorzijde.pdf","rb")
+    voorwoord = open("static\pdf files\Voorwoord.pdf","rb")
+    aannames = open("static\pdf files\Aannames.pdf","rb")
     lastpage = open("static\pdf files\Achterzijde.pdf","rb")
     merger.merge(page_number= 0, fileobj = frontpage)
+    merger.merge(page_number= 1, fileobj = voorwoord)
+    merger.append(aannames)
     merger.append(lastpage)
+
+    # page_count = merger.getNumPages()
+
+    # for i in range(page_count):
+    #     page = merger.getPage(i)
+    #     # Set the position of the page number
+    #     page.mergeTranslatedPage(0, 550, 800)
+    #     # Add the page number
+    #     page_number = merger.addBlankPage(width=page.mediaBox.getWidth(), height=page.mediaBox.getHeight())
+    #     page_number.mergePage(page)
+
     
     # create the output file
     with open("merged.pdf", "wb") as f:
@@ -885,6 +873,43 @@ def generatePDF(list,huid):
     file = "merged.pdf"
     done = True
     return [file, done]
+
+from matplotlib import pyplot as plt
+import numpy as np
+
+def chartimg(co2,kost,prim):
+   
+    x1 = np.array(["Huidig", "Nieuw", "Nieuw met PV"])
+    y1 = np.array(co2)
+    y2 = np.array(kost)
+    y3 = np.array(prim)
+
+    fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, figsize=(8.27, 11.69))
+
+    # Plot the data on each subplot
+    colors = [(0.107, 0.180, 0.186, 0.776),(0.107, 0.180, 0.186, 0.776),(0.107, 0.180, 0.186, 0.776)]
+
+    ax1.barh(x1, y1,color = colors)
+    ax1.set_title('CO2 uitstoot')
+    ax1.set_xlabel('Kg co2 per jaar')
+
+    ax2.barh(x1, y2,color = colors)
+    ax2.set_title('Verbruikskost')
+    ax2.set_xlabel('€ per jaar')
+
+    ax3.barh(x1, y3,color = colors)
+    ax3.set_title('Primaire energie')
+    ax3.set_xlabel('kWh per jaar')
+    fig.tight_layout()
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='pdf')
+    pdf = buffer.getvalue()
+    buffer.close()
+
+
+    return pdf
+
 
 
 

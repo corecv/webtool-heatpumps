@@ -1,14 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
 
 {% block content %}
 <div  class = "column" >
-<h1 >Verbruiksgegevens</h1>
+<h1 class = "page_title" >Verbruiksgegevens</h1>
     <form action="" method="post">
       {{ form.hidden_tag() }}
       {% for field in form %}
       <p style = "text-transform: capitalize"><strong>{{field.description}} </strong></p>
       
-      <div class = "tab">{{ field.label }}: {{ field }}</div>
+      <div class = "tab">
+          {{ field.label }}: {{ field }}
+      </div>
 
         {% if field.errors %}
           <ul class="errors">
@@ -20,13 +22,14 @@
       {% endfor %}
       <br>
 
+<p>Dit was de finale stap, door nu op "Volgende" te klikken worden uw resultaten berekend. Dit kan even duren.</p>
     <input type="submit" value="Volgende">
   </form>
 
 </div>
 
 <div  class = "column" >
-  <h1> Uitleg </h1>
+  <h1 class = "page_title"> Uitleg </h1>
       <p>Nu we op de hoogte zijn van de algemene gegevens en huidige voorzieningen van uw woning, resten er enkel nog een paar cijfers die dienen ingevuld te worden. Door op de secties hieronder te klikken kunt u per vraag extra uitleg raadplegen.       
       </p>
   <button type="button" class="collapsible">Stookolie (in liter) </button>

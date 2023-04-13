@@ -12,13 +12,13 @@ CSV FILE INLEZEN
 ================================================================================
 '''
 # ALLE INGELEZEN DATA HIERONDER komt uit de csv: "overzichtSLPs.csv
-def insertCSV(filename):
-    filename="overzichtSLPs.csv"
-    csv = str(filename)
-    path = os.getcwd()
-    pathcsv = os.path.join(path, csv)
-    data = pd.read_csv(os.path.join(path, csv))
-    return data
+# def insertCSV(filename):
+#     filename="overzichtSLPs.csv"
+#     csv = str(filename)
+#     path = os.getcwd()
+#     pathcsv = os.path.join(path, csv)
+#     data = pd.read_csv(os.path.join(path, csv))
+#     return data
 
 '''
 ================================================================================
@@ -47,16 +47,18 @@ HIERONDER EEN LIJST VAN INPUTVOORZIENGEN EN DE INGEGEVEN DATA
 # https://www.energids.be/nl/vraag-antwoord/hoeveel-co2-stoot-mijn-woning-uit/68/#:~:text=aardgas%3A%200%2C198%20kg%20CO2,kg%20CO2%20per%20kWh
 # https://www.vlaanderen.be/epb-pedia/rekenmethode/rekenmethode-e-peil/karakteristiek-jaarlijks-primair-energieverbruik
 verbruikers = {
-    "elektriciteit":{"naam": "elektriciteit", "co2 per kwh":0.23,"omzetting prim energie":2.5,"kost per kwh":0.3,"eenheid":"kWh"},
-    "aardgas":{"naam": "aardgas","co2 per kwh":0.198,"omzetting prim energie":1,"kost per kwh":0.5,"eenheid":"kWh"},
-    "stookolie":{"naam":"stookolie","co2 per kwh":0.264,"omzetting prim energie":1,"kost per kwh":0.5,"eenheid":"liter"},
+    "elektriciteit":{"naam": "elektriciteit", "co2 per kwh":0.23,"omzetting prim energie":2.5,"kost per kwh":0.3,"eenheid":"kWh","tokWh":1},
+    "aardgas":{"naam": "aardgas","co2 per kwh":0.198,"omzetting prim energie":1,"kost per kwh":0.5,"eenheid":"kWh","tokWh":1},
+    "stookolie":{"naam":"stookolie","co2 per kwh":0.264,"omzetting prim energie":1,"kost per kwh":0.5,"eenheid":"liter","tokWh":10},
     "zonne-energie":{"co2 per kwh":0,"omzetting prim energie":0,"kost per kwh":0},
     "hout":{"co2 per kwh":0,"omzetting prim energie":0,"kost per kwh":0}
     }   
 
 #INPUTVOORZIENINGEN: de voorzieningen die de user te zien krijgt bij initiatie van de tool
 
-cvKetel_gas = {"naam":"Gasketel","Toepassing":"Ruimteverwarming","verbruiker": "aardgas","efficientie":0.9}
+# heatPump_LW_3 = {"naam":"lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":6000,"varEff":COPair}
+
+cvKetel_gas = {"naam":"Gasketel","maxVermogen":"/","Toepassing":"Ruimteverwarming","eenheid vermogen":'kW',"verbruiker": "aardgas","efficientie":0.9,"prijs":0,"varEff":None}
 cvKetel_stookolie = {"naam":"Stookolieketel","Toepassing":"Ruimteverwarming","verbruiker": "stookolie","efficientie":0.9}
 pelletkachel = {"naam":"pelletkachel","Toepassing":"Ruimteverwarming","verbruiker":"houtpellet","efficientie":0.85} 
 elecKetel = {"naam":"Elektrische ketel","Toepassing":"Ruimteverwarming","verbruiker":"elektriciteit","efficientie":1} 
@@ -89,17 +91,29 @@ Elecinput = [elektriciteit_net]
 VOORZIENINGEN
 ================================================================================
 """
+"""COP matrix"""
+"""
+                    slecht isolatie - matig isolatie - goed isolatie
+Radiator        |         x      |           x        |         x
+Vloerverwarming |           x     |       x           |     x
+"""
 
+copLW = [[4,4.2,4.5],[4.6,4.8,5]]   
+copGW= [[4.5,4.7,4.9],[5,5.2,5.4]]
+copLL= [[4,4.2,4.5],[4.6,4.8,5]]
+copHY= [[4,4.2,4.5],[4.6,4.8,5]]
+
+cops = {"lucht-water Warmtepomp":copLW,"bodem-water Warmtepomp":copGW,"lucht-lucht Warmtepomp":copLL,"hybride Warmtepomp":copHY}
 #warmtepompen
-heatPump_LW_3 = {"naam":"lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.8,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":5289,"varEff":COPair}
-heatPump_LW_5 = {"naam":"Lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.8,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":6370,"varEff":COPair}
-heatPump_LW_8 = {"naam":"lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.5,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":9385,"varEff":COPair}
-heatPump_LW_10 = {"naam":"lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.54,"maxVermogen":10,"eenheid vermogen":'kW',"prijs":7798,"varEff":COPair}
+heatPump_LW_3 = {"naam":"lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":6000,"varEff":COPair}
+heatPump_LW_5 = {"naam":"Lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":7000,"varEff":COPair}
+heatPump_LW_8 = {"naam":"lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":10000,"varEff":COPair}
+heatPump_LW_10 = {"naam":"lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":10,"eenheid vermogen":'kW',"prijs":11000,"varEff":COPair}
 
-heatPump_GW_3 = {"naam":"bodem-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":3.73,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":6800,"varEff":COPgeo}
-heatPump_GW_5 = {"naam":"bodem-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.23,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":13900,"varEff":COPgeo}
-heatPump_GW_8 = {"naam":"bodem-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.4,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":16300,"varEff":COPgeo}
-heatPump_GW_10 = {"naam":"bodem-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.5,"maxVermogen":15,"eenheid vermogen":'kW',"prijs":19000,"varEff":COPgeo}
+heatPump_GW_3 = {"naam":"bodem-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":6800,"varEff":COPgeo}
+heatPump_GW_5 = {"naam":"bodem-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":13900,"varEff":COPgeo}
+heatPump_GW_8 = {"naam":"bodem-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":16300,"varEff":COPgeo}
+heatPump_GW_10 = {"naam":"bodem-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":15,"eenheid vermogen":'kW',"prijs":19000,"varEff":COPgeo}
 
 heatPump_WW_3 = {"naam":"water-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":9000,"varEff":COPwat}
 heatPump_WW_5 = {"naam":"water-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":9300,"varEff":COPwat}
@@ -184,7 +198,7 @@ scenario7 = {"scenario":"scenario 7","ruimteverwarming":"condensatieketel","sani
 scenario1 = {"scenario":"scenario 1", "ruimteverwarming":"warmtepomp LW","sanitair warm water":"warmtepomp LW","elektriciteit":"elektriciteitsnet", "PV" :False, 'criteria':['Q1']}
 scenario2 = {"scenario":"scenario 2", "ruimteverwarming":"warmtepomp GW","sanitair warm water":"warmtepomp GW","elektriciteit":"elektriciteitsnet", "PV" :False, 'criteria':['Q1']}
 scenario3 = {"scenario":"scenario 3", "ruimteverwarming":"warmtepomp WW","sanitair warm water":"warmtepomp WW","elektriciteit":"elektriciteitsnet", "PV" : False, 'criteria':['Q0']}
-scenario4 = {"scenario":"scenario 4","ruimteverwarming":"warmtepomp LL","sanitair warm water":"warmtepomp LL","elektriciteit":"elektriciteitsnet", "PV" : False, 'criteria':['Q2']}
+scenario4 = {"scenario":"scenario 4","ruimteverwarming":"warmtepomp LL","sanitair warm water":"Gasketel","elektriciteit":"elektriciteitsnet", "PV" : False, 'criteria':['Q2'],"verdeling":[0.7,1,1]}
 scenario5 = {"scenario":"scenario 5","ruimteverwarming":"warmtepomp HY","sanitair warm water":"warmtepomp HY","elektriciteit":"elektriciteitsnet", "PV" : False, 'criteria':['Q2','Q3','Q4']}
 
 

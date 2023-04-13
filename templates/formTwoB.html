@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
 
 {% block content %}
 <div  class = "column" >
 
-    <h1>{% block title %} Huidige voorzieningen {% endblock %}</h1>
+    <h1 class = "page_title"> Huidige voorzieningen </h1>
 <form method="POST">
     {{ form.csrf_token }}
 
@@ -54,7 +54,7 @@
 </div>
 
 <div  class = "column" >
-    <h1> Uitleg </h1>
+    <h1 class = "page_title"> Uitleg </h1>
 </div>
 
 {% endblock %}
