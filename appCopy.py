@@ -10,7 +10,7 @@ import numpy as np
 
 import pandas as pd
 
-
+#testtekst om te testen of git gelinkt is aan google
 
 '''
 ================================================================================
@@ -760,7 +760,7 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
 huidig = {"ruimteverwarming":cvKetel_gas,"sanitair warm water":cvKetel_gas,"elektriciteit":elektriciteit_net}
 cons = {"aardgas":20000,"elektriciteit":4000}
 kos = {"aardgas":{"kost per kwh":0.3},"elektriciteit":{"kost per kwh":0.4}}
-testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(0,1))
+# testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(0,1))
 
 
 """========================================"""
