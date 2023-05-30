@@ -8,7 +8,7 @@ from data import RVinput, SWWinput, Elecinput, combiInput
 """=== generate inputs voor meerdere forms"""
 """Hieronder staat de declaratie van inputs die in meerdere forms gebruikt worden, elk field wordt gemaakt via een functie die het field genereert"""
 def elecVoorziening():
-    elec = BooleanField('Heeft u reeds zonnepanelen?')
+    elec = RadioField('Heeft u reeds zonnepanelen?',choices=["Ja","Nee"],validators=[InputRequired()])
     return elec
 
 def jaarverbruikElec():

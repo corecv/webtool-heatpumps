@@ -33,9 +33,9 @@ HIERONDER EEN LIJST VAN INPUTVOORZIENGEN EN DE INGEGEVEN DATA
 # https://www.energids.be/nl/vraag-antwoord/hoeveel-co2-stoot-mijn-woning-uit/68/#:~:text=aardgas%3A%200%2C198%20kg%20CO2,kg%20CO2%20per%20kWh
 # https://www.vlaanderen.be/epb-pedia/rekenmethode/rekenmethode-e-peil/karakteristiek-jaarlijks-primair-energieverbruik
 verbruikers = {
-    "elektriciteit":{"naam": "elektriciteit", "co2 per kwh":0.23,"omzetting prim energie":2.5,"kost per kwh":0.4,"eenheid":"kWh"},
-    "aardgas":{"naam": "aardgas","co2 per kwh":0.198,"omzetting prim energie":1,"kost per kwh":0.1,"eenheid":"kWh"},
-    "stookolie":{"naam":"stookolie","co2 per kwh":0.264,"omzetting prim energie":1,"kost per kwh":0.08,"eenheid":"liter","tokWh":10},
+    "elektriciteit":{"naam": "elektriciteit", "co2 per kwh":0.23,"omzetting prim energie":2.5,"kost per kwh":0.4,"eenheid":"kWh","avg":3500},
+    "aardgas":{"naam": "aardgas","co2 per kwh":0.198,"omzetting prim energie":1,"kost per kwh":0.1,"eenheid":"kWh","avg":20000},
+    "stookolie":{"naam":"stookolie","co2 per kwh":0.264,"omzetting prim energie":1,"kost per kwh":0.08,"eenheid":"liter","tokWh":10,"avg":2300},
     }   
 
 #INPUTVOORZIENINGEN: de voorzieningen die de user te zien krijgt bij initiatie van de tool

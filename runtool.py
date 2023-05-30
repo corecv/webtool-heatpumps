@@ -72,17 +72,17 @@ def formTwoB():
         RVdict = next((d for d in RVinput if d["naam"]==selected1),None)
         selected2 = form.voorzieningSWW.data
         SWWdict = next((d for d in SWWinput if d["naam"]==selected2),None)
-        selected3 = form.elec.data
-        elec = next((d for d in Elecinput if d["naam"]==selected3),None) #hier kan de optie komen om pv mee te rekenen of niet
+        elec = Elecinput[0] 
+        elec.update({"PV":selected2})
         huidigevoorzieningen = {"ruimteverwarming":RVdict,"sanitair warm water":SWWdict,"elektriciteit":elec}
         session["huidige voorzieningen"] = huidigevoorzieningen
                 
         energy_sources = []
         for v in huidigevoorzieningen.values():
-            if v.get('verbruiker') in energy_sources:
+            if v.get('verbruiker') in energy_sources or v == 'csrf_token':
                 continue
             else:
-                energy_sources.append(v.get('verbruiker'))
+                energy_sources.append(verbruikers.get(v.get('verbruiker')))
 
         session['verbruikers'] = energy_sources
 
@@ -101,7 +101,8 @@ def consumption():
         name = source.get('naam')
         eenheid = source.get('eenheid')
         price = source.get('kost per kwh') if source.get('tokwh') == None else source.get('kost per kwh')/source.get('tokwh')
-        setattr(ConsumptionForm, f'{name}_consumption', FloatField(f'Geef uw jaarverbruik aan {name} in [{eenheid}]',validators=[InputRequired()],description= f'{name}'))
+        avg = source.get('avg') 
+        setattr(ConsumptionForm, f'{name}_consumption', FloatField(f'Geef uw jaarverbruik aan {name} in [{eenheid}]',default = avg, validators=[InputRequired()],description= f'{name}'))
         setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',default = price,validators=[InputRequired()]))
     if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == False:
         setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg"))

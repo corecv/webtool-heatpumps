@@ -1,6 +1,6 @@
 from forms import *
 from flask import render_template
-from data import verbruikers,toepassingen,SLPs,scenarios,warmtepompen,andere
+from data import verbruikers,SLPs,warmtepompen,andere
 from flask_weasyprint import HTML
 from pypdf import PdfMerger
 from io import BytesIO
