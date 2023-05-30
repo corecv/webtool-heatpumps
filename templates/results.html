@@ -10,6 +10,16 @@
         <br><br>
     <strong>KANTTEKENING:</strong> De berekende getallen met betrekking tot investering, energiebesparing en CO2-besparing zijn louter richtwaarden. De stappen in deze tool zijn te beperkt om een gedetailleerde berekening te kunnen uitvoeren. Indien u een meer accurate studie van uw huidige energie-installatie en mogelijkheden tot een warmtepomp zoekt, neem dan contact op met een deskundige.
     </p>
+    <p><strong>Inputgegevens:</strong>
+
+        <ul>
+            <li>Aantal bewoners: {{userd[1]}}</li>
+            <li>Warmte afgiftesysteem: {{userd[0]}}</li>
+            <li>Isolatiegraad: {{userd[2]}}</li>
+
+        </ul>
+        
+    </p>
     {%for dict in table%}
         <h3>{{dict.get('scenario')}}: {{dict.get('voorziening')}} </h3>
         
@@ -18,8 +28,6 @@
             <p style="margin-left: 25px;">Besparing Verbruikskost: {{dict.get('kost')}} €/jaar = {{dict.get('kostP')}} %</p>
             <p style="margin-left: 25px;">Investering: {{dict.get('investering')}} €</p>
 
-
-        
     {% endfor %}
     <br><br>
     <br><br>
@@ -48,16 +56,16 @@
     <title>Chart.js Bar Chart - Stacked</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<p>De grafiek toont een procentuele besparingen tussen de/het aangeraden scenario('s) en de huidige situatie.
+<p>
+    De grafiek toont een procentuele besparingen tussen de/het aangeraden scenario('s) en de huidige situatie.
     Dus een staaf met een hoogte van 60% betekend een besparing van 60% in de overeenkomstige categorie t.o.v. de huidige situatie
 </p>
 
-    <canvas id="myChart" style="width:100%;height:100%"></canvas>
+    <canvas id="myChart" style="width:100%;height:40%;float:left"></canvas>
 
-</div>
+
     <script>
     const ctx = document.getElementById('myChart').getContext('2d');
-    // const labels = {{labels | tojson}};
     const data = {
             labels: {{labels | tojson}},
             datasets: {{datasets | tojson}}
@@ -111,7 +119,25 @@
     new Chart(ctx, config);
 
     </script>
+    <p>
+        <ul>
+        <li>CO2 =  de hoeveelheid CO2 die uitgestoten wordt ten gevolge van uw energievoorziening. </li>
+        
+        <li>Verbruikskost = de kost die u betaald voor het verbruik</li>
+        <li>Primaire energie = de initiele hoeveelheid energie die nodig is om uw gevraagde hoeveelheid energie op te wekken. Voor aardgas is dit meestal gewoonweg "1" omdat het gas rechstreeks bij u thuis verbrandt wordt. 
+            Maar elektriciteit die u van het net afneemt is onderhevig aan verliezen tijdens de opwekking en transport, 
+            hierdoor is er meer dan 1 kWh elektriciteit nodig om 1 kWh op te wekken. Deze waarde kan negatief zijn in de resultaten, dit is niet abnormaal aangezien 
     
+        </li>
+    </ul>
+    </p>
+    <p>
+        In deze tool hebben wij ervoor gekozen om de vier meest gebruikte warmtepompen te simuleren. Maar wij willen graag benadrukken dat er ook nog andere manieren zijn om duurzaam te verwarmen, denk hierbij aan aquathermie of warmtenetten. 
+
+
+
+    </p>
+</div>
 
 
 {% endblock %}

@@ -1,8 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, session, send_file
 from forms import*
-from appCopy import main, generatePDF, scenarioSelection
+from appCopy import main, generatePDF
 from data import toepassingen, RVinput,SWWinput,combiInput,Elecinput,scenarios,verbruikers
-import json
 import threading
 
 
@@ -101,8 +100,9 @@ def consumption():
     for source in energy_sources:
         name = source.get('naam')
         eenheid = source.get('eenheid')
+        price = source.get('kost per kwh') if source.get('tokwh') == None else source.get('kost per kwh')/source.get('tokwh')
         setattr(ConsumptionForm, f'{name}_consumption', FloatField(f'Geef uw jaarverbruik aan {name} in [{eenheid}]',validators=[InputRequired()],description= f'{name}'))
-        setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',validators=[InputRequired()]))
+        setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',default = price,validators=[InputRequired()]))
     if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == False:
         setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg"))
         setattr(ConsumptionForm, 'pricePV', FloatField('kost pv installatie',validators=[InputRequired()],default = 4500))
@@ -118,8 +118,8 @@ def consumption():
         for source in energy_sources:
             a = source.get('tokWh')
             s = source.get('naam')
-            verbruik[s] = getattr(form, s + '_consumption').data*a
-            kost[s] = {"kost per kwh":getattr(form, s + '_prijs').data/a}
+            verbruik[s] = getattr(form, s + '_consumption').data*a if a != None else getattr(form, s + '_consumption').data
+            kost[s] = {"kost per kwh":getattr(form, s + '_prijs').data/a} if a != None else {"kost per kwh":getattr(form, s + '_prijs').data}
         session['verbruik'] = verbruik
         session['kost'] = kost
         
@@ -154,35 +154,19 @@ def calculate():
     variables = session.get('variables')
     i = variables.get('isolatie')
     a = variables.get('afgifte')
-    if i == "Goed geisoleerd" and a == "Vloerverwarming":
-        crit = "Q1"
-    elif i == "Goed geisoleerd" and a == "Radiatoren":
-        crit = "Q2"
-    elif i == "Matig geisoleerd" and a == "Vloerverwarming":
-        crit = "Q3"
-    elif i == "Matig geisoleerd" and a == "Radiatoren":
-        crit = "Q2"
-    else:
-        crit = "Q4"
-    print("criteria",crit)
-    #hieronder nieuwe manier om via matrix de cop te bepalen
     if a == "Radiatoren":
         r = 0
     else:
         r = 1
     if i == "Goed geisoleerd":
-        c = 0
+        c = 2
     elif i == "Matig geisoleerd":
         c = 1
     else:
-        c = 2
+        c = 0
     index = (r,c)
-
     scenariosf = scenarios
-    # scenariosf = scenarioSelection(scenariolist=scenarios,crit = crit)
-
-    
-
+ 
     calc = main(toepass=toepassingen,huidigeVoorzieningen=session.get('huidige voorzieningen'),huidigverbruik=session.get('verbruik'),scenariosList=scenariosf,updateverbruikers=session.get("kost"),PV=session.get('PV'),inwoners=session.get("variables").get("inwoners"),COPindex=index)
     print("sessie!", session.get('PV'))
     pdf = generatePDF(calc[0],calc[1])
@@ -194,15 +178,15 @@ def calculate():
 
 @app.route('/results')
 def results():
-    labels = ['CO2', 'Primaire energie', 'Verbruiksost']
-    # num_datasets = []
+    labels = ['CO2', 'Primaire energie', 'Verbruikskost']
     data = []
     table = []
     dict = session.get('graph')
     for i in range(len(dict)):
         tabled = {"scenario":f'Scenario {i+1}',"voorziening":dict[i].get('profiel').get('ruimteverwarming'),"CO2abs":dict[i].get('co2abs'),"CO2perc":dict[i].get('co2'),"prim":dict[i].get('primaire'),"primP":dict[i].get('primaireP'),'kost':dict[i].get('kost'),'kostP':dict[i].get('kostP'),'investering':dict[i].get('investering')}
+        n = dict[i].get('profiel').get('ruimteverwarming')
         dataset = {
-            'label': f'Scenario {i+1}',
+            'label': f'{n}',
             'data': [dict[i].get('co2'),dict[i].get('primaireP'),dict[i].get('kostP')],
             'backgroundColor': f'rgba({(i)*100}, {(i)*150}, {(i)*90}, 0.2)',
             'borderColor': f'rgba({i*0}, {i*0}, {i*0}, 1)',
@@ -211,10 +195,14 @@ def results():
         }
         data.append(dataset)
         table.append(tabled)
+    userdata = []
+    for v in session.get('variables').values():
+        userdata.append(v)
+
 
  
 
-    return render_template('results.html', labels = labels, datasets=data,table=table)
+    return render_template('results.html',userd = userdata, labels = labels, datasets=data,table=table)
 
 
 @app.route('/download')
@@ -222,7 +210,7 @@ def sendFile():
     pdf = session.get('file')
     with open(pdf,'r'):     
         try:
-            return send_file(pdf ) #, as_attachment=True)
+            return send_file(pdf) #, as_attachment=True)
         except Exception as e:
             return str(e)
 
