@@ -64,7 +64,7 @@ elektrischeDoorstroomboiler_10 = {"naam":"doorstroomboiler","Toepassing":"sanita
 
 RVinput = [cvKetel_gas, cvKetel_stookolie]
 
-SWWinput= [doorstroomGas,doorstroomElec,zonneboiler]
+SWWinput= [doorstroomGas,doorstroomElec] #,zonneboiler]
 
 combiInput = [cvKetel_gas, cvKetel_stookolie]
 

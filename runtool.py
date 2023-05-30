@@ -72,8 +72,9 @@ def formTwoB():
         RVdict = next((d for d in RVinput if d["naam"]==selected1),None)
         selected2 = form.voorzieningSWW.data
         SWWdict = next((d for d in SWWinput if d["naam"]==selected2),None)
+        selected3 = form.elec.data
         elec = Elecinput[0] 
-        elec.update({"PV":selected2})
+        elec.update({"PV":selected3})
         huidigevoorzieningen = {"ruimteverwarming":RVdict,"sanitair warm water":SWWdict,"elektriciteit":elec}
         session["huidige voorzieningen"] = huidigevoorzieningen
                 
@@ -104,7 +105,8 @@ def consumption():
         avg = source.get('avg') 
         setattr(ConsumptionForm, f'{name}_consumption', FloatField(f'Geef uw jaarverbruik aan {name} in [{eenheid}]',default = avg, validators=[InputRequired()],description= f'{name}'))
         setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',default = price,validators=[InputRequired()]))
-    if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == False:
+
+    if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Nee":
         setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg"))
         setattr(ConsumptionForm, 'pricePV', FloatField('kost pv installatie',validators=[InputRequired()],default = 4500))
 
