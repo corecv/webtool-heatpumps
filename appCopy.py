@@ -551,6 +551,9 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
     #data in verbruikers update (persoonlijke kostprijs per kwh bijvoorbeeld)
     for k,v in updateverbruikers.items():
         verbruikers.get(k).update(v)
+    
+    #sanitair warm water in het scenario met LL warmtepomp updaten naar welke installatie er nu aanwezig is (gas of stookolieketel)
+    scenariosList[2].update({"sanitair warm water":huidigeVoorzieningen.get('sanitair warm water').get('naam')})
 
     #het verbruik verdelen over de verschillende toepassingen
     verbruikdiv = verbruikverdeling(verbruik = huidigverbruik, pers = inwoners,huidigevoorziening=huidigeVoorzieningen) #
@@ -641,10 +644,10 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
 === TESTFUNCTIE ===
 """
 """Deze functie dient om deze code te runnen zonder heel de webpagina te openen"""
-huidig = {"ruimteverwarming":andere.get("Gasketel"),"sanitair warm water":andere.get("Gasketel"),"elektriciteit":andere.get("elektriciteitsnet")}
-cons = {"aardgas":20000,"elektriciteit":4000}
-kos = {"aardgas":{"kost per kwh":0.14},"elektriciteit":{"kost per kwh":0.5}}
-testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(0,0))
+# huidig = {"ruimteverwarming":andere.get("Gasketel"),"sanitair warm water":andere.get("Gasketel"),"elektriciteit":andere.get("elektriciteitsnet")}
+# cons = {"aardgas":20000,"stookolie":50000,"elektriciteit":4000}
+# kos = {"aardgas":{"kost per kwh":0.14},"elektriciteit":{"kost per kwh":0.5},"stookolie":{"kost per kwh":0.08}}
+# testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(1,0))
 
 
 """========================================"""

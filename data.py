@@ -43,7 +43,7 @@ verbruikers = {
 # heatPump_LW_3 = {"naam":"lucht-water Warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":6000,"varEff":COPair}
 
 cvKetel_gas = {"naam":"Gasketel","maxVermogen":"/","Toepassing":"Ruimteverwarming","eenheid vermogen":'kW',"verbruiker": "aardgas","efficientie":0.9,"prijs":0,"varEff":None}
-cvKetel_stookolie = {"naam":"Stookolieketel","Toepassing":"Ruimteverwarming","verbruiker": "stookolie","efficientie":0.9}
+cvKetel_stookolie = {"naam":"Stookolieketel","eenheid vermogen":'kW',"maxVermogen":"/","Toepassing":"Ruimteverwarming","verbruiker": "stookolie","efficientie":0.9,"prijs":0}
 pelletkachel = {"naam":"pelletkachel","Toepassing":"Ruimteverwarming","verbruiker":"houtpellet","efficientie":0.85} 
 elecKetel = {"naam":"Elektrische ketel","Toepassing":"Ruimteverwarming","verbruiker":"elektriciteit","efficientie":1} 
 doorstroomGas = {"naam":"Doorstroomboiler op gas","Toepassing":"Ruimteverwarming","verbruiker":"aardgas","efficientie":0.95} 
