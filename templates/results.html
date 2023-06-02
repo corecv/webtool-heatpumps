@@ -5,7 +5,7 @@
     <h1 class = "page_title"> Uw persoonlijke resultaten</h1>
     <h1> Uw persoonlijke resultaten zijn berekend </h1>
     <p>Nu alle stappen voltooid zijn, heeft de tool een analyse van uw huidige woning en energie-installatie kunnen uitvoeren en mogelijke opties voor warmtepompen gegenereerd. Download onderstaand PDF-bestand om deze nieuwe scenario’s met hun bijhorende investeringen en besparingen op vlak van energiegebruik en CO2-uitstoot te bekijken.
-        <br><br>Voor meer uitleg over wat de types warmtepompen juist inhouden verwijzen we graag naar onze "Gids naar een duurzamere energietranstie", een brochure die het team dit jaar heeft uitgebracht met als doel een overzicht te bieden van duurzame verwarmingstechnieken. Klik hier om naar de brochure te surfen: <a href = "https://www.thinkcore.be/nl/gids-naar-een-duurzamere-energietransitie" target="_blank">Gids</a>
+        <br><br>Voor meer uitleg over wat de types warmtepompen juist inhouden verwijzen we graag naar onze "Gids naar een duurzamere energietranstie bij u thuis", een brochure die het CORE-team dit jaar heeft uitgebracht met als doel een overzicht te bieden van duurzame verwarmingstechnieken. Klik hier om naar de brochure te surfen: <a href = "https://www.thinkcore.be/nl/gids-naar-een-duurzamere-energietransitie" target="_blank">Gids</a>
     
         <br><br>
     <strong>KANTTEKENING:</strong> De berekende getallen met betrekking tot investering, energiebesparing en CO2-besparing zijn louter richtwaarden. De stappen in deze tool zijn te beperkt om een gedetailleerde berekening te kunnen uitvoeren. Indien u een meer accurate studie van uw huidige energie-installatie en mogelijkheden tot een warmtepomp zoekt, neem dan contact op met een deskundige.
@@ -14,7 +14,7 @@
 
         <ul>
             <li>Aantal bewoners: {{userd[1]}}</li>
-            <li>Warmte afgiftesysteem: {{userd[0]}}</li>
+            <li>Warmteafgiftesysteem: {{userd[0]}}</li>
             <li>Isolatiegraad: {{userd[2]}}</li>
 
         </ul>
@@ -24,8 +24,8 @@
         <h3>{{dict.get('scenario')}}: {{dict.get('voorziening')}} </h3>
         
             <p style="margin-left: 25px;">Besparing CO2: {{dict.get('CO2abs')}} kg = {{dict.get('CO2perc')}} %</p>
-            <p style="margin-left: 25px;">Besparing Primaire energie: {{dict.get('prim')}} kWh = {{dict.get('primP')}}  %</p>
-            <p style="margin-left: 25px;">Besparing Verbruikskost: {{dict.get('kost')}} €/jaar = {{dict.get('kostP')}} %</p>
+            <p style="margin-left: 25px;">Besparing primaire energie: {{dict.get('prim')}} kWh = {{dict.get('primP')}}  %</p>
+            <p style="margin-left: 25px;">Besparing verbruikskost: {{dict.get('kost')}} €/jaar = {{dict.get('kostP')}} %</p>
             <p style="margin-left: 25px;">Investering: {{dict.get('investering')}} €</p>
 
     {% endfor %}

@@ -107,7 +107,7 @@ def consumption():
         setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',default = price,validators=[InputRequired()]))
 
     if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Nee":
-        setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg"))
+        setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg rechts"))
         setattr(ConsumptionForm, 'pricePV', FloatField('kost pv installatie',validators=[InputRequired()],default = 4500))
 
     form = ConsumptionForm(request.form)
@@ -126,11 +126,11 @@ def consumption():
         session['verbruik'] = verbruik
         session['kost'] = kost
         
-        if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == True:
+        if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Ja":
             session['PV'] = {'PV':False,'size':0,'price':0}
             return redirect(url_for('calculate'))
         
-        elif session.get("huidige voorzieningen").get('elektriciteit').get('PV') == False:
+        elif session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Nee":
             session['PV'] = {'PV':True,'size':form.sizePV.data,'price':form.pricePV.data}
             return redirect(url_for('calculate'))
 
@@ -161,6 +161,7 @@ def calculate():
         r = 0
     else:
         r = 1
+        
     if i == "Goed geisoleerd":
         c = 2
     elif i == "Matig geisoleerd":

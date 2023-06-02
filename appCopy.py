@@ -1,6 +1,6 @@
 from forms import *
 from flask import render_template
-from data import verbruikers,SLPs,warmtepompen,andere
+from data import verbruikers,SLPs,warmtepompen,andere,scenarios,toepassingen
 from flask_weasyprint import HTML
 from pypdf import PdfMerger
 from io import BytesIO
@@ -382,7 +382,7 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
     for i in range(len(toepassingen)):
         newDict = {}
         print("TOEPASSINNGGGG", toepassingen[i])
-        if huidigprof.get("dictVoorzieningen").get(toepassingen[i]).get('voorziening').get('naam') == scenario.get(toepassingen[i]) and calcPV == False:
+        if huidigprof.get("dictVoorzieningen").get(toepassingen[i]).get('voorziening').get('naam') == scenario.get(toepassingen[i]):
             update = {toepassingen[i]:huidigprof.get("dictVoorzieningen").get(toepassingen[i])}
             
             print("UPDATE")
@@ -417,14 +417,14 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
 
     nieuwprofiel['PV'] = PV if calcPV == True else "Geen PV berekening"
     
-    nieuwprofiel['voorzieningen'] = {k:nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('naam') 
-                                    + " " 
-                                    + str(nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('maxVermogen')) 
-                                    + nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('eenheid vermogen')  
+    # nieuwprofiel['voorzieningen'] = {k:nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('naam') 
+    #                                 + " " 
+    #                                 + str(nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('maxVermogen')) 
+    #                                 + nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('eenheid vermogen')  
                                     
                                     
-                                    for k in nieuwprofiel.get('dictVoorzieningen')
-                                    }
+    #                                 for k in nieuwprofiel.get('dictVoorzieningen')
+    #                                 }
     verbruikDict = {}
     print(nieuwprofiel.get('voorzieningen'))
 
@@ -605,7 +605,7 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
         vgl = sortedList[i][0].get('vgl')
         data = {}
         data['profiel'] = sortedList[i][0].get('profiel').get('voorzieningen')
-        data.get('profiel')["nr"] = i+1
+        # data.get('profiel')["nr"] = i+1
         data['co2abs'] = round(vgl.get('CO2 besparing'))
         data["co2"] = round(vgl.get('CO2 besparing perc'))
         data["primaire"] = round(vgl.get("besparing primaire energie"))
@@ -621,7 +621,7 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
         vgl = sortedList[i][0].get('vgl')
         data = {}
         data['profiel'] = sortedList[i][0].get('profiel').get('voorzieningen')
-        data.get('profiel')["nr"] = i+1
+        # data.get('profiel')["nr"] = i+1
         data['co2abs kg CO2'] = round(vgl.get('CO2 besparing'))
         data["co2 %"] = round(vgl.get('CO2 besparing perc'))
         data["primaire kWh"] = round(vgl.get("besparing primaire energie"))
@@ -644,10 +644,10 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
 === TESTFUNCTIE ===
 """
 """Deze functie dient om deze code te runnen zonder heel de webpagina te openen"""
-# huidig = {"ruimteverwarming":andere.get("Gasketel"),"sanitair warm water":andere.get("Gasketel"),"elektriciteit":andere.get("elektriciteitsnet")}
-# cons = {"aardgas":20000,"stookolie":50000,"elektriciteit":4000}
-# kos = {"aardgas":{"kost per kwh":0.14},"elektriciteit":{"kost per kwh":0.5},"stookolie":{"kost per kwh":0.08}}
-# testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(1,0))
+huidig = {"ruimteverwarming":andere.get("Gasketel"),"sanitair warm water":andere.get("Doorstroomboiler op gas"),"elektriciteit":andere.get("elektriciteitsnet")}
+cons = {"aardgas":20000,"stookolie":50000,"elektriciteit":4000}
+kos = {"aardgas":{"kost per kwh":0.14},"elektriciteit":{"kost per kwh":0.5},"stookolie":{"kost per kwh":0.08}}
+testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(1,0))
 
 
 """========================================"""

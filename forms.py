@@ -34,7 +34,7 @@ def costStookolie():
     return costStookolie
 
 def pvData():
-    sizePV = FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500)
+    sizePV = FloatField('kWh van PV-installatie',validators=[InputRequired()],default = 3500)
     return sizePV
 
 def solarBoilerdata():
@@ -43,7 +43,7 @@ def solarBoilerdata():
 
 
 def pricePV():
-    pricePV = FloatField('kost pv installatie',validators=[InputRequired()],default = 4500)
+    pricePV = FloatField('Kost PV-installatie',validators=[InputRequired()],default = 4500)
     return pricePV
 
 
