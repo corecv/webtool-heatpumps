@@ -44,7 +44,7 @@ def dimensionering(voorziening,totvraag,insulation):
                  continue
             
     elif voorziening in andere.keys(): #als de voorziening geen warmtepomp is
-         newvoorziening = andere.get(voorziening)
+        newvoorziening = andere.get(voorziening)
 
     else: 
         print("voorziening niet gevonden")
@@ -88,14 +88,14 @@ def nieuweVoorzieningen(scenario,toepassing,huidigprof,index):
     a = scenario.get(toepassing)  #de nieuwe voorziening voor toepassing i 
     if list(scenario.values()).count(a) == 1: 
                 # maxvraag = (huidigprof.get("dictVoorzieningen").get(toepassing).get('maxvraag'))*4  #maal 4 om kwkwartier om te zetten naar kWh
-                vraag = huidigprof.get("dictVoorzieningen").get(toepassing).get('totvraag')
-                nieuwVoorziening = dimensionering(a,vraag,insulation = index[1])
-                eff = {"efficientie":selectCOP(index = index,matrix = nieuwVoorziening.get('efficientie'))}
-                nieuwVoorziening.update(eff)
-                                
-                                
-                                
-                print("nieuwe efficientie",eff)
+                if a != "Zonneboiler":
+                    vraag = huidigprof.get("dictVoorzieningen").get(toepassing).get('totvraag')
+                    nieuwVoorziening = dimensionering(a,vraag,insulation = index[1])
+                    eff = {"efficientie":selectCOP(index = index,matrix = nieuwVoorziening.get('efficientie'))}
+                    nieuwVoorziening.update(eff)
+                else:
+                    nieuwVoorziening = dimensionering(a,totvraag=0,insulation = index[1])
+                                 
 
                 # d = {toepassing:nieuwVoorziening}
                 # nieuwevoorzieningen.update(d)
@@ -122,13 +122,19 @@ def verbruikverdeling(verbruik,pers, huidigevoorziening): #verbruik is een dicti
     warmtevraagSWW_J = m*cp*dt #dT 10-> 60: 50°c
     warmtevraagSWWf = warmtevraagSWW_J/3600000 #omzetting J naar kWh
      
-    voorzieningSWW = huidigevoorziening.get('sanitair warm water')
-    verbruikerSWW = huidigevoorziening.get('sanitair warm water').get('verbruiker')
+    
     verbruikerRV = huidigevoorziening.get('ruimteverwarming').get('verbruiker')
     verbruikerElec = huidigevoorziening.get('elektriciteit').get('verbruiker')
-    verbruikSWW  = warmtevraagSWWf/voorzieningSWW.get('efficientie')
-    percSWW = verbruikSWW/verbruik.get(verbruikerSWW)
-
+    voorzieningSWW = huidigevoorziening.get('sanitair warm water')
+    verbruikerSWW = huidigevoorziening.get('sanitair warm water').get('verbruiker')
+    print("########",voorzieningSWW)
+    if voorzieningSWW['naam'] != "Zonneboiler":
+        verbruikSWW  = warmtevraagSWWf/voorzieningSWW.get('efficientie')
+        percSWW = verbruikSWW/verbruik.get(verbruikerSWW)
+    else:
+        verbruikSWW =0
+    
+         
     if verbruikerRV == verbruikerSWW:
         verbruikRV = (1-percSWW)*verbruik.get(verbruikerSWW)
         verbruikDict = {"ruimteverwarming":verbruikRV,"sanitair warm water":verbruikSWW,"elektriciteit":verbruik.get("elektriciteit")}
@@ -138,7 +144,7 @@ def verbruikverdeling(verbruik,pers, huidigevoorziening): #verbruik is een dicti
         verbruikDict = {"ruimteverwarming":verbruik.get(verbruikerRV),"sanitair warm water":verbruikSWW,"elektriciteit":verbruikelec}
 
     else:
-        verbruikDict = {"ruimteverwarming":verbruik.get(verbruikerRV),"sanitair warm water":verbruik.get(verbruikerSWW),"elektriciteit":verbruik.get("elektriciteit")}
+        verbruikDict = {"ruimteverwarming":verbruik.get(verbruikerRV),"sanitair warm water":warmtevraagSWWf,"elektriciteit":verbruik.get("elektriciteit")}
 
     print(verbruikDict)
 
@@ -373,7 +379,8 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
     nieuwevoorzienigen = {}
     for toepassing in toepassingen:
             nieuwevoorzienigen[toepassing] = nieuweVoorzieningen(scenario=scenario,toepassing=toepassing,huidigprof=huidigprof,index = index)
-            print('+++++++++++++++++++++++++++++++++++++',toepassing,nieuwevoorzienigen.get((toepassing)).get('naam'))
+            if toepassing =="sanitair warm water": print(nieuwevoorzienigen.get(toepassing))
+            print('+++++++++++++++++++++++++++++++++++++',toepassing,nieuwevoorzienigen.get(toepassing).get('naam'))
     
     print("     NIEUWE VOORZIENINGEN zonder PV") if calcPV == False else print("     NIEUWE VOORZIENINGEN met PV")
     
@@ -413,20 +420,30 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
     nieuwprofiel['nieuwevoorzieningen'] = nieuwevoorzienigen
     nieuwprofiel['dictVoorzieningen'] = dictVoorzieningen
     nieuwprofiel['voorzieningen'] = {k:nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('naam') for k in nieuwprofiel.get('dictVoorzieningen')}
-
+    print(nieuwprofiel['dictVoorzieningen']['ruimteverwarming']['voorziening'].keys())
 
     nieuwprofiel['PV'] = PV if calcPV == True else "Geen PV berekening"
     
-    # nieuwprofiel['voorzieningen'] = {k:nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('naam') 
-    #                                 + " " 
-    #                                 + str(nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('maxVermogen')) 
-    #                                 + nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('eenheid vermogen')  
+    nieuwprofiel['voorzieningen'] = {}
+    
+    for k in nieuwprofiel['dictVoorzieningen']:
+        d = nieuwprofiel['dictVoorzieningen'][k]
+        if d.get('voorziening').get('naam') != "Zonneboiler":
+            nieuwprofiel['voorzieningen'].update({k:d.get('voorziening').get('naam')+ " " + str(d.get('voorziening').get('maxVermogen')) + d.get('voorziening').get('eenheid vermogen')  })
+        else:
+            nieuwprofiel['voorzieningen'].update({k:d.get('voorziening').get('naam')})
+
+
+            # {k:nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('naam') 
+            #                         + " " 
+            #                         + str(nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('maxVermogen')) 
+            #                         + nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('eenheid vermogen')  
                                     
                                     
-    #                                 for k in nieuwprofiel.get('dictVoorzieningen')
-    #                                 }
+            #                         for k in nieuwprofiel.get('dictVoorzieningen')
+            #                         }
     verbruikDict = {}
-    print(nieuwprofiel.get('voorzieningen'))
+    # print(nieuwprofiel.get('voorzieningen'))
 
     print("     NIEUW VERBRUIK BEREKENEN")
    
@@ -487,8 +504,7 @@ def verbruikvergelijking(dictH,dictN):
 def profileComparison(huidProf, nieuwProf):
    vergelijking = {} 
    vergelijking['PV'] = nieuwProf.get('PV')
-#    print(nieuwProf.get('primaire energie'))
-#    print(nieuwProf.get('co2'))
+
 
    vergelijking["besparing primaire energie"] = huidProf.get('primaire energie') - nieuwProf.get('primaire energie')
    vergelijking["besparing primaire energie perc"] =(vergelijking.get('besparing primaire energie')/huidProf.get('primaire energie'))*100
@@ -553,8 +569,12 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
         verbruikers.get(k).update(v)
     
     #sanitair warm water in het scenario met LL warmtepomp updaten naar welke installatie er nu aanwezig is (gas of stookolieketel)
+    
     scenariosList[2].update({"sanitair warm water":huidigeVoorzieningen.get('sanitair warm water').get('naam')})
-
+    if huidigeVoorzieningen['sanitair warm water']['naam'] == "Zonneboiler":
+        for a in range(len(scenariosList)):
+            scenariosList[a].update({"sanitair warm water":huidigeVoorzieningen.get('sanitair warm water').get('naam')}) 
+    print(scenariosList) 
     #het verbruik verdelen over de verschillende toepassingen
     verbruikdiv = verbruikverdeling(verbruik = huidigverbruik, pers = inwoners,huidigevoorziening=huidigeVoorzieningen) #
     print("")
@@ -599,12 +619,7 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
     sortedList = sorted(listVGL, key=lambda i: (i[0].get('vgl').get('CO2 besparing perc'),i[0].get('vgl').get('besparing primaire energie perc'),-i[0].get('vgl').get('totale kostbesparing perc')),reverse=True)
     #als de co2 besparing <0 dan voegen we het scenario niet toe aan de lijst
     sortedList = [scen for scen in sortedList if scen[0].get('vgl').get('CO2 besparing perc') > 0 ]
-    voorzieningen = []
-    # for i in range(len(sortedList)):
-    #     voorzieningen.append(sortedList[i][0].get('profiel').get('nieuwevoorzieningen').get('ruimteverwarming').get('naam'))
-        # voorzieningen.append(sortedList[i][0].get('profiel').get('nieuwevoorzieningen').get('sanitair warm water').get('naam'))
-        # voorzieningen.append(sortedList[i][0].get('profiel').get('nieuwevoorzieningen').get('elektriciteit').get('naam'))
-    #data voor de grafieken apart verzamelen
+
     graph_data = []
     for i in range(len(sortedList)):
         vgl = sortedList[i][0].get('vgl')
@@ -652,10 +667,12 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
 === TESTFUNCTIE ===
 """
 """Deze functie dient om deze code te runnen zonder heel de webpagina te openen"""
-huidig = {"ruimteverwarming":andere.get("Gasketel"),"sanitair warm water":andere.get("Doorstroomboiler op gas"),"elektriciteit":andere.get("elektriciteitsnet")}
-cons = {"aardgas":20000,"stookolie":50000,"elektriciteit":4000}
-kos = {"aardgas":{"kost per kwh":0.14},"elektriciteit":{"kost per kwh":0.5},"stookolie":{"kost per kwh":0.08}}
-testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(1,0))
+test = False
+if test == True:
+    huidig = {"ruimteverwarming":andere.get("Gasketel"),"sanitair warm water":andere.get("Zonneboiler"),"elektriciteit":andere.get("elektriciteitsnet")}
+    cons = {"aardgas":20000,"elektriciteit":4000}
+    kos = {"aardgas":{"kost per kwh":0.14},"elektriciteit":{"kost per kwh":0.5},"stookolie":{"kost per kwh":0.08}}
+    testfunct = main(toepass=toepassingen,huidigeVoorzieningen=huidig,huidigverbruik=cons,scenariosList=scenarios,updateverbruikers=kos,PV={'PV':True,'size':3500,'price':5000},inwoners=4,COPindex=(1,0))
 
 
 """========================================"""

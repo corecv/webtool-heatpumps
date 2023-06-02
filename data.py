@@ -36,6 +36,7 @@ verbruikers = {
     "elektriciteit":{"naam": "elektriciteit", "co2 per kwh":0.23,"omzetting prim energie":2.5,"kost per kwh":0.4,"eenheid":"kWh","avg":3500},
     "aardgas":{"naam": "aardgas","co2 per kwh":0.198,"omzetting prim energie":1,"kost per kwh":0.1,"eenheid":"kWh","avg":20000},
     "stookolie":{"naam":"stookolie","co2 per kwh":0.264,"omzetting prim energie":1,"kost per kwh":0.08,"eenheid":"liter","tokWh":10,"avg":2300},
+    "zonne-energie":{"naam":"zonne-energie","co2 per kwh":0,"omzetting prim energie":0,"kost per kwh":0,"eenheid":"liter","tokWh":10,"avg":2300}
     }   
 
 #INPUTVOORZIENINGEN: de voorzieningen die de user te zien krijgt bij initiatie van de tool
@@ -48,7 +49,7 @@ pelletkachel = {"naam":"pelletkachel","Toepassing":"Ruimteverwarming","verbruike
 elecKetel = {"naam":"Elektrische ketel","Toepassing":"Ruimteverwarming","verbruiker":"elektriciteit","efficientie":1} 
 doorstroomGas = {"naam":"Doorstroomboiler op gas","Toepassing":"Ruimteverwarming","verbruiker":"aardgas","efficientie":0.95,"maxVermogen":10,"eenheid vermogen":"kW","prijs":0} 
 elecVerwarming = {"naam":"Elektrische verwarming","Toepassing":"Ruimteverwarming","verbruiker":"elektriciteit","efficientie":1} 
-zonneboiler = {"naam":"Zonneboiler","Toepassing":"Sanitair warm water","verbruiker":"zonne-energie","efficientie":1} 
+zonneboiler = {"naam":"Zonneboiler","Toepassing":"Sanitair warm water","verbruiker":"zonne-energie","efficientie":1,'prijs':0} 
 
 """elektriciteit"""
 elektriciteit_net = {"naam":"elektriciteitsnet","Toepassing":"elektriciteit","verbruiker": "elektriciteit","efficientie":1,'prijs':0,"maxVermogen":"","eenheid vermogen":"","PV":False}
@@ -64,7 +65,7 @@ elektrischeDoorstroomboiler_10 = {"naam":"doorstroomboiler","Toepassing":"sanita
 
 RVinput = [cvKetel_gas, cvKetel_stookolie]
 
-SWWinput= [doorstroomGas,doorstroomElec] #,zonneboiler]
+SWWinput= [doorstroomGas,doorstroomElec, zonneboiler]
 
 combiInput = [cvKetel_gas, cvKetel_stookolie]
 
@@ -166,7 +167,7 @@ hier komt een lijst van dictionaries die een scenario voorstellen, voor elke voo
 lists die naar de berekeningen gestuurd wordt
 """
 warmtepompen = {'warmtepomp_LW':warmtepomp_LW,'warmtepomp_LL':warmtepomp_LL,'warmtepomp_GW':warmtepomp_GW,'warmtepomp_HY':warmtepomp_HY,"Gasketel":cvKetel_gas}
-andere = {"Gasketel":cvKetel_gas,"elektriciteitsnet":elektriciteit_net,"Stookolieketel":cvKetel_stookolie,"Elektrische doorstroomboiler":doorstroomElec,"Doorstroomboiler op gas":doorstroomGas}
+andere = {"Gasketel":cvKetel_gas,"elektriciteitsnet":elektriciteit_net,"Stookolieketel":cvKetel_stookolie,"Elektrische doorstroomboiler":doorstroomElec,"Doorstroomboiler op gas":doorstroomGas,"Zonneboiler":zonneboiler}
 
 #scenarios
 

@@ -80,7 +80,7 @@ def formTwoB():
                 
         energy_sources = []
         for v in huidigevoorzieningen.values():
-            if v.get('verbruiker') in energy_sources or v == 'csrf_token':
+            if v.get('verbruiker') in energy_sources or v == 'csrf_token' or v.get('verbruiker')=="zonne-energie":
                 continue
             else:
                 energy_sources.append(verbruikers.get(v.get('verbruiker')))
