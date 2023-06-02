@@ -69,12 +69,13 @@ class Gegevens(FlaskForm):
 
 """===tweede stap"""
 class FormTwoA(FlaskForm):
-    rvsww = RadioField(label = 'Welke voorziening heeft u voor ruimteverwarming en sanitair warm water?', choices=[(d["naam"],d["naam"]) for d in combiInput], validators=[InputRequired()])
+    rvsww = RadioField(label = 'Welke voorziening heeft u voor ruimteverwarming en sanitair warm water?', choices=[(d["naam"],d["naam"]) for d in RVinput], validators=[InputRequired()])
+    # sww = RadioField(label ='Welke voorziening heeft u voor sanitair warm water?', choices=[(a["naam"],a["naam"]) for a in SWWinput], validators=[InputRequired()])
     elec = elecVoorziening()
 
 class FormTwoB(FlaskForm):
-    voorzieningRV = RadioField('Welke voorziening heeft u voor ruimteverwarming?', choices=[(a["naam"],a["naam"]) for a in RVinput], validators=[InputRequired()])
-    voorzieningSWW = RadioField('Welke voorziening heeft u voor sanitair warm water?', choices=[(a["naam"],a["naam"]) for a in SWWinput], validators=[InputRequired()])
+    rvsww = RadioField(label ='Welke voorziening heeft u voor ruimteverwarming?', choices=[(a["naam"],a["naam"]) for a in RVinput], validators=[InputRequired()])
+    sww = RadioField(label ='Welke voorziening heeft u voor sanitair warm water?', choices=[(a["naam"],a["naam"]) for a in SWWinput], validators=[InputRequired()])
     elec = elecVoorziening()
 
 
@@ -94,6 +95,7 @@ class FormTwoB(FlaskForm):
 
 
 class ConsumptionForm(FlaskForm):
+    
 
     pass
 

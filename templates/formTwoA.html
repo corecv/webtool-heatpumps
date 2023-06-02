@@ -20,6 +20,21 @@
         </ul>
     {% endif %}
 
+    {% if c=="Nee" %}
+        <p> 
+            {{ form.sww.label }}
+            {{ form.sww(size=5, width = 50) }}
+        </p>
+
+        {% if form.sww.errors %}
+            <ul class="errors">
+                {% for error in form.sww.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {%endif%}
+
     <p> 
         {{ form.elec.label }}
         {{ form.elec(size=5, width = 50) }}
@@ -32,6 +47,10 @@
             {% endfor %}
         </ul>
     {% endif %}
+
+
+
+
 
     <p>
         <input type="submit" value="Volgende">
@@ -56,6 +75,19 @@
             Deze ketel verbrandt aardgas zodat de vrijgekomen warmte gestuurd kan worden naar bv.  radiatoren of vloerverwarming die op hun beurt de ruimte opwarmen. Hiervoor is een gasleiding vereist.
         </ul>
         </div>
+        
+    {%if c=="Nee" %}
+    <button type="button" class="collapsible">Sanitair warm water</button>
+        <div class="content">
+            <p><ul><li>Doorstroomboiler op gas:</li>
+                Deze ketel verbrandt stookolie zodat de vrijgekomen warmte gestuurd kan worden naar bv.  radiatoren of vloerverwarming die op hun beurt de ruimte opwarmen. Typisch bevat deze installatie ook een grote tank waarin stookolie opgeslagen wordt.
+                <li>Doorstroomboiler op elektriciteit:</li>
+                Deze ketel verbrandt aardgas zodat de vrijgekomen warmte gestuurd kan worden naar bv.  radiatoren of vloerverwarming die op hun beurt de ruimte opwarmen. Hiervoor is een gasleiding vereist.
+                <li>Zonneboiler:</li>
+                Deze ketel bevat een elektrisch verwarmingselement zodat de opgewekte warmte gestuurd kan worden naar bv. radiatoren of vloerverwarming die op hun beurt de ruimte opwarmen. Met een zonneboiler bent u reeds duurzaam aan het verwarmen dus gaan we niet aanbevelen om deze te vervangen. In deze situatie gaan we enkel simuleren om uw ruimteverwarming te vervangen. 
+            </ul>
+            </div>
+    {%endif%}
     <button type="button" class="collapsible">Zonnepanelen</button>
     <div class="content">
         <p> Daarnaast dient u nog aan te duiden of u al dan niet zonnepanelen heeft 

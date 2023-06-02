@@ -3,12 +3,14 @@ from forms import*
 from appCopy import main, generatePDF
 from data import toepassingen, RVinput,SWWinput,combiInput,Elecinput,scenarios,verbruikers
 import threading
+from flask_caching import Cache
 
 
 
 app = Flask(__name__)
 # SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = 'geheime tekst'
+cache = Cache(app)
 
 
 @app.route('/', methods=('GET', 'POST'))
@@ -22,64 +24,80 @@ def gegevens():
     form = Gegevens()
 
     if form.validate_on_submit():
-        variables = {"isolatie":form.isolatie.data,"afgifte":form.afgifte.data,"inwoners":form.size.data}
+        variables = {"isolatie":form.isolatie.data,"afgifte":form.afgifte.data,"inwoners":form.size.data,"combisysteem":form.combi.data}
         session["variables"] = variables
+        # session["combi"] = form.combi.data
         
-        if form.combi.data == "Ja":
+        # if form.combi.data == "Ja":
             
-            return redirect(url_for('formTwoA'))
+        #     return redirect(url_for('formTwoA'))
 
-        elif form.combi.data == "Nee": 
+        # elif form.combi.data == "Nee": 
 
-            return redirect(url_for('formTwoB'))
+        return redirect(url_for('formTwoA'))
 
 
     return render_template('gegevens.html',form=form)
 
 @app.route("/formTwoA", methods=('GET', 'POST'))
 def formTwoA(): 
-    form = FormTwoA()
+    combi = session['variables']['combisysteem']
+    form = FormTwoA() if combi =='Ja' else FormTwoB()
+    cont = False
+
     if form.validate_on_submit():
         selected1 = form.rvsww.data
         RVdict = next((d for d in combiInput if d["naam"]==selected1),None)
-        SWWdict = RVdict
+        
         selected2 = form.elec.data
         elec = Elecinput[0] #hier kan de optie komen om pv mee te rekenen of niet
         elec.update({"PV":selected2})
-        huidigevoorzieningen = {"ruimteverwarming":RVdict,"sanitair warm water":SWWdict,"elektriciteit":elec}
-  
+        
+        if combi == "Nee":
+            selected3  = form.sww.data
+            SWWdict = next((d for d in SWWinput if d["naam"]==selected3),None)
+        
+        else:
+            SWWdict = RVdict
+
+        huidigevoorzieningen = {}
+        huidigevoorzieningen["ruimteverwarming"] = RVdict
+        huidigevoorzieningen["sanitair warm water"] = SWWdict
+        huidigevoorzieningen["elektriciteit"] = elec
         session["huidige voorzieningen"] = huidigevoorzieningen
         energy_sources = []
         for v in huidigevoorzieningen.values():
-            if v.get('verbruiker') in energy_sources or v == 'csrf_token':
+            if v.get('verbruiker') in energy_sources or v == 'csrf_token' or v.get('verbruiker')=="zonne-energie":
                 continue
             else:
                 energy_sources.append(verbruikers.get(v.get('verbruiker')))
         session['verbruikers'] = energy_sources
-
+        print("++++++++++++++++++++++++++++++++++++++++++=", energy_sources)
+        cont=True
         if energy_sources:
             # redirect to the consumption form
             return redirect(url_for('consumption'))
 
-    return render_template('formTwoA.html',form=form)
+    return render_template('formTwoA.html',form=form,c=combi)
 
 
 @app.route("/formTwoB", methods=('GET', 'POST'))
 def formTwoB(): 
     form = FormTwoB()
+    
     if form.validate_on_submit():
-        selected1 = form.voorzieningRV.data
+        selected1 = form.rv.data
         RVdict = next((d for d in RVinput if d["naam"]==selected1),None)
-        selected2 = form.voorzieningSWW.data
+        selected2 = form.sww.data
         SWWdict = next((d for d in SWWinput if d["naam"]==selected2),None)
         selected3 = form.elec.data
         elec = Elecinput[0] 
         elec.update({"PV":selected3})
         huidigevoorzieningen = {"ruimteverwarming":RVdict,"sanitair warm water":SWWdict,"elektriciteit":elec}
         session["huidige voorzieningen"] = huidigevoorzieningen
-                
+        huidigevoorzieningen = {}        
         energy_sources = []
-        for v in huidigevoorzieningen.values():
+        for v in session['huidige voorzieningen'].values():
             if v.get('verbruiker') in energy_sources or v == 'csrf_token' or v.get('verbruiker')=="zonne-energie":
                 continue
             else:
@@ -93,13 +111,19 @@ def formTwoB():
 
     return render_template('formTwoB.html',form=form)
 
+
 @app.route('/consumption', methods=['GET', 'POST'])
+@cache.cached(timeout=50)
 def consumption():
-  
     energy_sources = session.get('verbruikers')
-    
+    print("----------------------------------------",energy_sources)
+    form = ConsumptionForm()
+    print("formprint",form)
+    form.process(request.form)
+
     for source in energy_sources:
         name = source.get('naam')
+        print("TEST",name)
         eenheid = source.get('eenheid')
         price = source.get('kost per kwh') if source.get('tokwh') == None else source.get('kost per kwh')/source.get('tokwh')
         avg = source.get('avg') 
@@ -109,8 +133,6 @@ def consumption():
     if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Nee":
         setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg rechts"))
         setattr(ConsumptionForm, 'pricePV', FloatField('kost pv installatie',validators=[InputRequired()],default = 4500))
-
-    form = ConsumptionForm(request.form)
     
     if request.method == 'POST' and form.validate():
         # create a dictionary from the form data
@@ -133,9 +155,11 @@ def consumption():
         elif session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Nee":
             session['PV'] = {'PV':True,'size':form.sizePV.data,'price':form.pricePV.data}
             return redirect(url_for('calculate'))
+   
 
     return render_template('consumption_form.html', form=form, PV=session.get("huidige voorzieningen").get('elektriciteit').get('PV'))
-    
+
+
 
 
 @app.route("/generate_pdf")

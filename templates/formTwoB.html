@@ -8,11 +8,11 @@
     {{ form.csrf_token }}
 
     <p> 
-        {{ form.voorzieningRV.label }}
-        {{ form.voorzieningRV(size=5, width = 50) }}
+        {{ form.rv.label }}
+        {{ form.rv(size=5, width = 50) }}
     </p>
 
-    {% if form.voorzieningRV.errors %}
+    {% if form.rv.errors %}
         <ul class="errors">
             {% for error in form.voorzieningRV.errors %}
                 <li>{{ error }}</li>
@@ -21,13 +21,13 @@
     {% endif %}
     
     <p> 
-        {{ form.voorzieningSWW.label }}
-        {{ form.voorzieningSWW(size=5, width = 50) }}
+        {{ form.sww.label }}
+        {{ form.sww(size=5, width = 50) }}
     </p>
 
-    {% if form.voorzieningSWW.errors %}
+    {% if form.sww.errors %}
         <ul class="errors">
-            {% for error in form.voorzieningSWW.errors %}
+            {% for error in form.sww.errors %}
                 <li>{{ error }}</li>
             {% endfor %}
         </ul>

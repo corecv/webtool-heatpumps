@@ -574,7 +574,7 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
     if huidigeVoorzieningen['sanitair warm water']['naam'] == "Zonneboiler":
         for a in range(len(scenariosList)):
             scenariosList[a].update({"sanitair warm water":huidigeVoorzieningen.get('sanitair warm water').get('naam')}) 
-    print(scenariosList) 
+    # print(scenariosList) 
     #het verbruik verdelen over de verschillende toepassingen
     verbruikdiv = verbruikverdeling(verbruik = huidigverbruik, pers = inwoners,huidigevoorziening=huidigeVoorzieningen) #
     print("")
