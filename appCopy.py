@@ -126,22 +126,20 @@ def verbruikverdeling(verbruik,pers, huidigevoorziening): #verbruik is een dicti
     verbruikerSWW = huidigevoorziening.get('sanitair warm water').get('verbruiker')
     verbruikerRV = huidigevoorziening.get('ruimteverwarming').get('verbruiker')
     verbruikerElec = huidigevoorziening.get('elektriciteit').get('verbruiker')
+    verbruikSWW  = warmtevraagSWWf/voorzieningSWW.get('efficientie')
+    percSWW = verbruikSWW/verbruik.get(verbruikerSWW)
 
     if verbruikerRV == verbruikerSWW:
-        verbruikSWW  = warmtevraagSWWf/voorzieningSWW.get('efficientie')
-        percSWW = verbruikSWW/verbruik.get(verbruikerSWW)
         verbruikRV = (1-percSWW)*verbruik.get(verbruikerSWW)
         verbruikDict = {"ruimteverwarming":verbruikRV,"sanitair warm water":verbruikSWW,"elektriciteit":verbruik.get("elektriciteit")}
 
     elif verbruikerSWW == verbruikerElec:  #is dus elektriciteit
-        verbruikSWW = warmtevraagSWWf/voorzieningSWW.get('efficientie')
-        percSWW = verbruikSWW/verbruik.get(verbruikerSWW)
         verbruikelec = (1-percSWW)*verbruik.get(verbruikerSWW)
-
         verbruikDict = {"ruimteverwarming":verbruik.get(verbruikerRV),"sanitair warm water":verbruikSWW,"elektriciteit":verbruikelec}
 
     else:
-        print("error in verbruikverdeling")
+        verbruikDict = {"ruimteverwarming":verbruik.get(verbruikerRV),"sanitair warm water":verbruik.get(verbruikerSWW),"elektriciteit":verbruik.get("elektriciteit")}
+
     print(verbruikDict)
 
     return verbruikDict
@@ -414,6 +412,8 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
     nieuwprofiel = {}
     nieuwprofiel['nieuwevoorzieningen'] = nieuwevoorzienigen
     nieuwprofiel['dictVoorzieningen'] = dictVoorzieningen
+    nieuwprofiel['voorzieningen'] = {k:nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('naam') for k in nieuwprofiel.get('dictVoorzieningen')}
+
 
     nieuwprofiel['PV'] = PV if calcPV == True else "Geen PV berekening"
     
@@ -582,7 +582,8 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
         if PV.get('PV') == True:
             nieuwProfPV = nieuwProfiel(toepassingen = toepass,scenario = scenariosList[i],huidigprof= huidigProf,calcPV = True,PV=PV,index=COPindex)
             list.append(nieuwProfPV)
-            nieuweProfielList.append(list)
+        nieuweProfielList.append(list)
+    
     print("")
     print("#######################################")
     print("NIEUWE PROFIELEN MET HUIDIGE VERGELIJKEN")
@@ -598,14 +599,22 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
     sortedList = sorted(listVGL, key=lambda i: (i[0].get('vgl').get('CO2 besparing perc'),i[0].get('vgl').get('besparing primaire energie perc'),-i[0].get('vgl').get('totale kostbesparing perc')),reverse=True)
     #als de co2 besparing <0 dan voegen we het scenario niet toe aan de lijst
     sortedList = [scen for scen in sortedList if scen[0].get('vgl').get('CO2 besparing perc') > 0 ]
-    
+    voorzieningen = []
+    # for i in range(len(sortedList)):
+    #     voorzieningen.append(sortedList[i][0].get('profiel').get('nieuwevoorzieningen').get('ruimteverwarming').get('naam'))
+        # voorzieningen.append(sortedList[i][0].get('profiel').get('nieuwevoorzieningen').get('sanitair warm water').get('naam'))
+        # voorzieningen.append(sortedList[i][0].get('profiel').get('nieuwevoorzieningen').get('elektriciteit').get('naam'))
     #data voor de grafieken apart verzamelen
     graph_data = []
     for i in range(len(sortedList)):
         vgl = sortedList[i][0].get('vgl')
         data = {}
-        data['profiel'] = sortedList[i][0].get('profiel').get('voorzieningen')
+        # print(sortedList[i][0].get('profiel').get('nieuwevoorzieningen').get('ruimteverwarming').keys())
+
+        data['profiel'] = sortedList[i][0].get('profiel').get('voorzieningen')       
         # data.get('profiel')["nr"] = i+1
+        # data['profiel'] = voorzieningen[i]
+
         data['co2abs'] = round(vgl.get('CO2 besparing'))
         data["co2"] = round(vgl.get('CO2 besparing perc'))
         data["primaire"] = round(vgl.get("besparing primaire energie"))
@@ -620,8 +629,7 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
     for i in range(len(sortedList)):
         vgl = sortedList[i][0].get('vgl')
         data = {}
-        data['profiel'] = sortedList[i][0].get('profiel').get('voorzieningen')
-        # data.get('profiel')["nr"] = i+1
+        data['profiel'] = sortedList[i][0].get('profiel').get('voorzieningen')             # data.get('profiel')["nr"] = i+1
         data['co2abs kg CO2'] = round(vgl.get('CO2 besparing'))
         data["co2 %"] = round(vgl.get('CO2 besparing perc'))
         data["primaire kWh"] = round(vgl.get("besparing primaire energie"))
