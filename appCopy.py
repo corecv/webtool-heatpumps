@@ -371,7 +371,6 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
     nieuwevoorzienigen = {}
     for toepassing in toepassingen:
             nieuwevoorzienigen[toepassing] = nieuweVoorzieningen(scenario=scenario,toepassing=toepassing,huidigprof=huidigprof,index = index)
-            if toepassing =="sanitair warm water": print(nieuwevoorzienigen.get(toepassing))
     
     print("     NIEUWE VOORZIENINGEN zonder PV") if calcPV == False else print("     NIEUWE VOORZIENINGEN met PV")
     
@@ -679,7 +678,6 @@ def generatePDF(list,huid):
             dict2 = {k:round(new.get('verbruik').get(k)) for k in new.get('verbruik')}
             dict3 = {k:-1*round(vgl.get('besparing verbruik').get(k)) for k in vgl.get('besparing verbruik')}
             number = list.index(comp) + 1 
-            print(dict1)
                        
             var = {
                 "name": new.get('voorzieningen').get('ruimteverwarming'),

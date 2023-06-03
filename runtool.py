@@ -184,7 +184,7 @@ def consumption():
             b = sourcedata['aardgas']
             verbruik['stookolie'] = form.stookolie.data * a if a != None else form.stookolie.data
             kost['stookolie'] = {"kost per kwh":form.stookolieC.data/a} if a != None else {"kost per kwh":form.stookolieC.data}
-            verbruik['aardgas'] = form.aardgas.data * b if a != None else form.aardgas.data
+            verbruik['aardgas'] = form.aardgas.data * b if b != None else form.aardgas.data
             kost['aardgas'] = {"kost per kwh":form.aardgasC.data/b} if b != None else {"kost per kwh":form.aardgasC.data}
 
        
