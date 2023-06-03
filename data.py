@@ -36,7 +36,7 @@ verbruikers = {
     "elektriciteit":{"naam": "elektriciteit", "co2 per kwh":0.23,"omzetting prim energie":2.5,"kost per kwh":0.4,"eenheid":"kWh","avg":3500},
     "aardgas":{"naam": "aardgas","co2 per kwh":0.198,"omzetting prim energie":1,"kost per kwh":0.1,"eenheid":"kWh","avg":20000},
     "stookolie":{"naam":"stookolie","co2 per kwh":0.264,"omzetting prim energie":1,"kost per kwh":0.08,"eenheid":"liter","tokWh":10,"avg":2300},
-    "zonne-energie":{"naam":"zonne-energie","co2 per kwh":0,"omzetting prim energie":0,"kost per kwh":0,"eenheid":"liter","tokWh":10,"avg":2300}
+    "zonne-energie":{"naam":"zonne-energie","co2 per kwh":0,"omzetting prim energie":0,"kost per kwh":0,"eenheid":"liter","tokWh":0,"avg":2300}
     }   
 
 #INPUTVOORZIENINGEN: de voorzieningen die de user te zien krijgt bij initiatie van de tool

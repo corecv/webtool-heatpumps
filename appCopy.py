@@ -127,7 +127,6 @@ def verbruikverdeling(verbruik,pers, huidigevoorziening): #verbruik is een dicti
     verbruikerElec = huidigevoorziening.get('elektriciteit').get('verbruiker')
     voorzieningSWW = huidigevoorziening.get('sanitair warm water')
     verbruikerSWW = huidigevoorziening.get('sanitair warm water').get('verbruiker')
-    print("########",voorzieningSWW)
     if voorzieningSWW['naam'] != "Zonneboiler":
         verbruikSWW  = warmtevraagSWWf/voorzieningSWW.get('efficientie')
         percSWW = verbruikSWW/verbruik.get(verbruikerSWW)
@@ -177,12 +176,9 @@ def nieuwVerbruik(voorziening,oudverbruik,huidigVraagProfiel): #huidigVraagProfi
     aandeel = voorziening.get("aandeel")
 
     if aandeel != None:
-            print('if AANDEEEEL')
             newdict = {}
             if variableEff != None:
-                # print("efficientie",efficientie)
                 eff = [a*COP for a in variableEff]
-                # print(eff)
                 verbruik = [(aandeel*a)/b for a,b in zip(huidigVraagProfiel, eff )]
                 verbruikC = [(aandeel*i)/COP for i in huidigVraagProfiel]
        
@@ -195,16 +191,12 @@ def nieuwVerbruik(voorziening,oudverbruik,huidigVraagProfiel): #huidigVraagProfi
             for k,v in oudverbruik.items():
                 newdict[k] = v*(1-aandeel)
             newdict[voorziening.get("verbruiker")] = sum(verbruik)
-            print('----', newdict)
             return {"variabel":{"profiel":verbruik,"verbruik":newdict },"constant":{"profiel":verbruikC,"totaal":sum(verbruikC)}}
 
     elif aandeel == None:
-            print('if GEEN AANDEEEEL')
 
             if variableEff != None:
-                # print("efficientie",efficientie)
                 eff = [a*COP for a in variableEff]
-                # print(eff)
                 verbruik = [a/b for a,b in zip(huidigVraagProfiel, eff )]
                 verbruikC = [i/COP for i in huidigVraagProfiel]
             elif variableEff == None:
@@ -380,47 +372,34 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
     for toepassing in toepassingen:
             nieuwevoorzienigen[toepassing] = nieuweVoorzieningen(scenario=scenario,toepassing=toepassing,huidigprof=huidigprof,index = index)
             if toepassing =="sanitair warm water": print(nieuwevoorzienigen.get(toepassing))
-            print('+++++++++++++++++++++++++++++++++++++',toepassing,nieuwevoorzienigen.get(toepassing).get('naam'))
     
     print("     NIEUWE VOORZIENINGEN zonder PV") if calcPV == False else print("     NIEUWE VOORZIENINGEN met PV")
     
     for i in range(len(toepassingen)):
         newDict = {}
-        print("TOEPASSINNGGGG", toepassingen[i])
         if huidigprof.get("dictVoorzieningen").get(toepassingen[i]).get('voorziening').get('naam') == scenario.get(toepassingen[i]):
             update = {toepassingen[i]:huidigprof.get("dictVoorzieningen").get(toepassingen[i])}
             
-            print("UPDATE")
-
             dictVoorzieningen.update(update) 
 
         else:
-            print("TEST WELKE ELSE")   
             voorziening = nieuwevoorzienigen.get(toepassingen[i])
             energievraag = huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('energievraag') #if calcPV == False else huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('energievraag') - PV.get('size')
             newDict['voorziening'] = voorziening
-            print(toepassingen[i],voorziening.get('naam'))
             nieuwCons = nieuwVerbruik(voorziening = voorziening,oudverbruik=huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('totverbruik'),huidigVraagProfiel = energievraag ) #energievraag,COP=voorziening.get("efficientie"),variableEff=voorziening.get("varEff"),aandeel = voorziening.get("aandeel"),oudverbruik=huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('totverbruik'))
             newDict['verbruik'] = nieuwCons.get("variabel")
             newDict['verbruikConstant'] = nieuwCons.get("constant")
 
             newDict['totverbruikConstant'] = nieuwCons.get('constant').get('totaal')
-            newDict['totverbruik'] = newDict.get('verbruik').get('verbruik')
-
-       
-                    
+            newDict['totverbruik'] = newDict.get('verbruik').get('verbruik')         
             update = {toepassingen[i]:newDict}
             dictVoorzieningen.update(update)
-            # print("verbruik per toepassing---------------------------------------:",toepassingen[i],"\n",
-            #     "variabele COP", newDict.get("totverbruik"),"\n",
-            #     "constante COP",newDict.get("totverbruikConstant")
-            #     )
+  
 
     nieuwprofiel = {}
     nieuwprofiel['nieuwevoorzieningen'] = nieuwevoorzienigen
     nieuwprofiel['dictVoorzieningen'] = dictVoorzieningen
     nieuwprofiel['voorzieningen'] = {k:nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('naam') for k in nieuwprofiel.get('dictVoorzieningen')}
-    print(nieuwprofiel['dictVoorzieningen']['ruimteverwarming']['voorziening'].keys())
 
     nieuwprofiel['PV'] = PV if calcPV == True else "Geen PV berekening"
     
@@ -433,17 +412,7 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
         else:
             nieuwprofiel['voorzieningen'].update({k:d.get('voorziening').get('naam')})
 
-
-            # {k:nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('naam') 
-            #                         + " " 
-            #                         + str(nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('maxVermogen')) 
-            #                         + nieuwprofiel.get('dictVoorzieningen').get(k).get('voorziening').get('eenheid vermogen')  
-                                    
-                                    
-            #                         for k in nieuwprofiel.get('dictVoorzieningen')
-            #                         }
     verbruikDict = {}
-    # print(nieuwprofiel.get('voorzieningen'))
 
     print("     NIEUW VERBRUIK BEREKENEN")
    
@@ -513,7 +482,6 @@ def profileComparison(huidProf, nieuwProf):
    vergelijking["CO2 besparing perc"] = (vergelijking.get("CO2 besparing")/huidProf.get('co2'))*100
    
    vergelijking["besparing verbruik"] = verbruikvergelijking(huidProf.get('verbruik'),nieuwProf.get('verbruik'))
-   print("besparing",vergelijking.get("besparing verbruik"))
    vergelijking["verbruikskostbesparing"] = {k:verbruikskost({k:v}) for k,v in vergelijking.get('besparing verbruik').items()}
    vergelijking["totale kostbesparing"] = sum(vergelijking.get('verbruikskostbesparing').values())
    vergelijking["totale kostbesparing perc"] = (vergelijking.get("totale kostbesparing")/huidProf.get('totale verbruikskost'))*100
@@ -538,7 +506,6 @@ def callComparison(listScenarios, profiel,PV,nieuweProfiel):
     print("=== vergelijking nieuwprofiel met huidig profiel voor:",listScenarios.get('scenario'),listScenarios.get('ruimteverwarming'),listScenarios.get('sanitair warm water'),listScenarios.get('elektriciteit'),'===')
     print("")
     vgl = profileComparison(profiel,nieuweProfiel[0])
-    print(vgl)
     vgl['scenario'] = listScenarios.get('scenario')
     dict1['profiel'] = nieuweProfiel[0]
     dict1['vgl'] = vgl
@@ -549,7 +516,6 @@ def callComparison(listScenarios, profiel,PV,nieuweProfiel):
             print("=== vergelijking nieuwprofiel met huidig profiel voor:",listScenarios.get('scenario'),listScenarios.get('ruimteverwarming'),'met PV ===')
             print("")
             vglPV = profileComparison(profiel,nieuweProfiel[1])
-            print(vglPV)
             vglPV['scenario'] = listScenarios.get('scenario')
             dict2['profiel']=nieuweProfiel[1]
             dict2['vgl'] = vglPV
@@ -639,7 +605,6 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
         data['investering'] = sortedList[i][0].get('profiel').get('investering')
 
         graph_data.append(data)
-        print("xxxxx", graph_data)
     
     for i in range(len(sortedList)):
         vgl = sortedList[i][0].get('vgl')

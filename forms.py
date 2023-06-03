@@ -13,6 +13,8 @@ def elecVoorziening():
 
 def jaarverbruikElec():
     electriciteit = FloatField('Jaarverbruik electriciteit',validators=[InputRequired()],default = 3500)
+    costElec = FloatField('Kost per kWh electriciteit',validators=[InputRequired()],default = 0.3)
+
     return electriciteit
 def costElec():
     costElec = FloatField('Kost per kWh electriciteit',validators=[InputRequired()],default = 0.3)
@@ -92,13 +94,32 @@ class FormTwoB(FlaskForm):
 #     costStookolie = costStookolie()
 #     electriciteit = jaarverbruikElec()
 #     costElec = costElec()
+#         setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg rechts"))
+#         setattr(ConsumptionForm, 'pricePV', FloatField('kost pv installatie',validators=[InputRequired()],default = 4500))
+#         setattr(ConsumptionForm, f'{name}_consumption', FloatField(f'Geef uw jaarverbruik aan {name} in [{eenheid}]',default = avg, validators=[InputRequired()],description= f'{name}'))
+#         setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',default = price,validators=[InputRequired()]))
+# class ConsumptionFormA(FlaskForm):
+#     aardgas 
 
-
-class ConsumptionForm(FlaskForm):
+# class ConsumptionFormB(FlaskForm):
     
+# class ConsumptionFormC(FlaskForm):
+
+# class ConsumptionFormD(FlaskForm):
+# class ConsumptionFormE(FlaskForm):
+class ConsumptionForm(FlaskForm):
 
     pass
 
+class ConsumptionFormA(FlaskForm):
+    aardgas  = FloatField('Geef uw jaarverbruik aan aardgas in kWh',default = 20000)
+    aardgasC  = FloatField('Geef uw prijs (in €) per kWh in voor aardgas',default = 0.3)
+    elec  = FloatField('Geef uw jaarverbruik aan elektriciteit in kWh',default = 3500)
+    elecC  = FloatField('Geef uw prijs (in €) per kWh in voor elektriciteit',default = 0.5) 
+    sizePV = FloatField("Geef de grootte van uw zonnepaneel installatie in in kWh",default = 3500)
+    pricePV = FloatField('Geef de kost van de zonnepaneel installatie in [€]',default = 4500) 
+    stookolie  = FloatField('Geef uw jaarverbruik aan stookolie in L in [Liter]',default = 2000) 
+    stookolieC  = FloatField('Geef uw prijs (in €) per L in voor stookolie [€/L]',default = 0.08) 
 
 # "===vierde stap==="
 

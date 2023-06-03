@@ -1,16 +1,17 @@
-from flask import Flask, render_template, redirect, url_for, request, session, send_file
+from flask import Flask, render_template, redirect, url_for, session, send_file
 from forms import*
 from appCopy import main, generatePDF
 from data import toepassingen, RVinput,SWWinput,combiInput,Elecinput,scenarios,verbruikers
 import threading
-from flask_caching import Cache
+
 
 
 
 app = Flask(__name__)
 # SECRET_KEY = os.urandom(32)
+# cache = Cache(app)
 app.config['SECRET_KEY'] = 'geheime tekst'
-cache = Cache(app)
+# app.config['CACHE_TYPE'] = 'simple'
 
 
 @app.route('/', methods=('GET', 'POST'))
@@ -113,53 +114,114 @@ def formTwoB():
 
 
 @app.route('/consumption', methods=['GET', 'POST'])
-@cache.cached(timeout=50)
+# @cache.cached(timeout=0,key_prefix='consumption')
 def consumption():
     energy_sources = session.get('verbruikers')
-    print("----------------------------------------",energy_sources)
-    form = ConsumptionForm()
-    print("formprint",form)
-    form.process(request.form)
+    for s in energy_sources:
+        print(s.get('tokWh'))
+    form = ConsumptionFormA()
+    # print("formprint",form)
 
-    for source in energy_sources:
-        name = source.get('naam')
-        print("TEST",name)
-        eenheid = source.get('eenheid')
-        price = source.get('kost per kwh') if source.get('tokwh') == None else source.get('kost per kwh')/source.get('tokwh')
-        avg = source.get('avg') 
-        setattr(ConsumptionForm, f'{name}_consumption', FloatField(f'Geef uw jaarverbruik aan {name} in [{eenheid}]',default = avg, validators=[InputRequired()],description= f'{name}'))
-        setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',default = price,validators=[InputRequired()]))
+    # if request.referrer and 'consumption' not in request.referrer:
+    #     # Reset the form to remove dynamically added fields
+    #     form = ConsumptionForm()
+    sources = [source['naam'] for source in energy_sources]
+    print(sources)
+    sourcedata = {source['naam']:source.get('tokWh') for source in energy_sources}
+    pv = session.get("huidige voorzieningen").get('elektriciteit').get('PV')
+    var = None
+    if "aardgas" in sources and 'stookolie' not in sources:
+        var = 10
 
-    if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Nee":
-        setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg rechts"))
-        setattr(ConsumptionForm, 'pricePV', FloatField('kost pv installatie',validators=[InputRequired()],default = 4500))
+    elif "stookolie" in sources and 'aardgas' not in sources:
+        var = 20
+
+    elif "stookolie" in sources and "aardgas" in sources:
+        var = 30
+ 
+    else:
+        var = -1  # Set a default value when none of the conditions match
     
-    if request.method == 'POST' and form.validate():
+
+    
+
+    # for source in energy_sources:
+    #     name = source.get('naam')
+    #     print("TEST",name)
+    #     eenheid = source.get('eenheid')
+    #     price = source.get('kost per kwh') if source.get('tokwh') == None else source.get('kost per kwh')/source.get('tokwh')
+    #     avg = source.get('avg') 
+    #     setattr(ConsumptionForm, f'{name}_consumption', FloatField(f'Geef uw jaarverbruik aan {name} in [{eenheid}]',default = avg, validators=[InputRequired()],description= f'{name}'))
+    #     setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',default = price,validators=[InputRequired()]))
+    
+    # if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Nee":
+    #     setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg rechts"))
+    #     setattr(ConsumptionForm, 'pricePV', FloatField('kost pv installatie',validators=[InputRequired()],default = 4500))
+    
+
+    # if request.method == 'POST' and form.validate():
+    if form.validate_on_submit():
+
+    
         # create a dictionary from the form data
         verbruik = {}
         kost = {}
         # verbruik = {source: getattr(form, source + '_consumption').data for source in energy_sources}
         # kost = {source: {"kost per kwh":getattr(form, source + '_prijs').data} for source in energy_sources}
-        for source in energy_sources:
-            a = source.get('tokWh')
-            s = source.get('naam')
-            verbruik[s] = getattr(form, s + '_consumption').data*a if a != None else getattr(form, s + '_consumption').data
-            kost[s] = {"kost per kwh":getattr(form, s + '_prijs').data/a} if a != None else {"kost per kwh":getattr(form, s + '_prijs').data}
+        #aardgas inladen
+        if var == 10 :
+            a = sourcedata['aardgas']
+            verbruik['aardgas'] = form.aardgas.data * a if a != None else form.aardgas.data
+            kost['aardgas'] = {"kost per kwh":form.aardgasC.data/a} if a != None else {"kost per kwh":form.aardgasC.data}
+        #stookolie inladen
+        if var == 20:
+            a = sourcedata['stookolie']
+            verbruik['stookolie'] = form.stookolie.data * a if a != None else form.stookolie.data
+            kost['stookolie'] = {"kost per kwh":form.stookolieC.data/a} if a != None else {"kost per kwh":form.stookolieC.data}
+        
+        if var == 30:
+            a = sourcedata['stookolie']
+            b = sourcedata['aardgas']
+            verbruik['stookolie'] = form.stookolie.data * a if a != None else form.stookolie.data
+            kost['stookolie'] = {"kost per kwh":form.stookolieC.data/a} if a != None else {"kost per kwh":form.stookolieC.data}
+            verbruik['aardgas'] = form.aardgas.data * b if a != None else form.aardgas.data
+            kost['aardgas'] = {"kost per kwh":form.aardgasC.data/b} if b != None else {"kost per kwh":form.aardgasC.data}
+
+       
+        session['PV'] = {'PV':False,'size':0,'price':0} if pv == 'Ja' else {'PV':True,'size':form.sizePV.data,'price':form.pricePV.data}
+        
+
+
+        verbruik['elektriciteit'] = form.elec.data * a if a != None else form.elec.data
+        kost['elektriciteit'] = {"kost per kwh":form.elecC.data/a} if a != None else {"kost per kwh":form.elecC.data}
+
+
         session['verbruik'] = verbruik
         session['kost'] = kost
         
-        if session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Ja":
-            session['PV'] = {'PV':False,'size':0,'price':0}
-            return redirect(url_for('calculate'))
+        # for source in energy_sources:
+        #     a = source.get('tokWh')
+        #     s = source.get('naam')
+        #     verbruik[s] = getattr(form, s + '_consumption').data*a if a != None else getattr(form, s + '_consumption').data
+        #     kost[s] = {"kost per kwh":getattr(form, s + '_prijs').data/a} if a != None else {"kost per kwh":getattr(form, s + '_prijs').data}
+        # session['verbruik'] = verbruik
+        # session['kost'] = kost
+       
+        return redirect(url_for('calculate'))
+        # if pv == "Ja":
+        #     session['PV'] = {'PV':False,'size':0,'price':0}
+        #     return redirect(url_for('calculate'))
         
-        elif session.get("huidige voorzieningen").get('elektriciteit').get('PV') == "Nee":
-            session['PV'] = {'PV':True,'size':form.sizePV.data,'price':form.pricePV.data}
-            return redirect(url_for('calculate'))
+        # elif pv == "Nee":
+        #     session['PV'] = {'PV':True,'size':form.sizePV.data,'price':form.pricePV.data}
+        #     return redirect(url_for('calculate'))
    
 
-    return render_template('consumption_form.html', form=form, PV=session.get("huidige voorzieningen").get('elektriciteit').get('PV'))
-
-
+    return render_template('consumption_form.html', form=form,scen = var, PV=pv)
+# @app.before_request
+# def before_request():
+#     if request.referrer and '/consumption' in request.referrer:
+#         cache.delete('consumption')
 
 
 @app.route("/generate_pdf")
@@ -206,7 +268,7 @@ def calculate():
 
 @app.route('/results')
 def results():
-    labels = ['CO2', 'Primaire energie', 'Verbruikskost']
+    labels = ['Besparing CO2', 'Besparing primaire energie', 'Besparing verbruikskost']
     data = []
     table = []
     dict = session.get('graph')
