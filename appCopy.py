@@ -316,6 +316,7 @@ def huidigProfiel(toepassingen,huidigevoorzieningen, huidigverbruik, slps):
         newDict['totvraag'] = energieVraag(voorziening.get('efficientie'),verbruik)  #per kwartier de vraag berekenen die de toepassing nodig heeft afhankelijk van de huidige efficientie, op basis hiervan kan het verbruik van de nieuwe voorziening met een nieuwe efficientie berekent worden 
 
         newDict['energievraag'] = verbruikProfiel(newDict.get('totvraag'),slp)  #verbruik dat de toepassing vraagt, per kwartier op een jaar
+        # newDict['energievraag'] =  newDict['totvraag'] #verbruikProfiel(newDict.get('totvraag'),slp)  #verbruik dat de toepassing vraagt, per kwartier op een jaar
 
         update = {toepassingen[i]:newDict}
         dictVoorzieningen.update(update)
@@ -631,7 +632,7 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
 === TESTFUNCTIE ===
 """
 """Deze functie dient om deze code te runnen zonder heel de webpagina te openen"""
-test = False
+test = True
 if test == True:
     huidig = {"ruimteverwarming":andere.get("Gasketel"),"sanitair warm water":andere.get("Zonneboiler"),"elektriciteit":andere.get("elektriciteitsnet")}
     cons = {"aardgas":20000,"elektriciteit":4000}
@@ -677,7 +678,9 @@ def generatePDF(list,huid):
             dict1 = new.get('voorzieningen')
             dict2 = {k:round(new.get('verbruik').get(k)) for k in new.get('verbruik')}
             dict3 = {k:-1*round(vgl.get('besparing verbruik').get(k)) for k in vgl.get('besparing verbruik')}
-            number = list.index(comp) + 1 
+            number = list.index(comp) + 1
+            # PV = {'prijs':new.get('PV')['price'],'size':new.get('PV')['size']} if type(vgl.get('PV')) == str else {}
+
                        
             var = {
                 "name": new.get('voorzieningen').get('ruimteverwarming'),
@@ -693,11 +696,16 @@ def generatePDF(list,huid):
                 "var6":round(vgl.get("CO2 besparing perc")),
                 "var7":round(new.get("investering")),
                 "var8":str(str(str(vgl.get('tvt')) + " jaar"))
+
             }
             co2.append(round(new.get('co2')))
             kost.append(round(new.get('totale verbruikskost')))
             primE.append(round(new.get('primaire energie')))
 
+
+            if type(vgl.get('PV')) != str:
+                var["var9"]  = new.get('PV')['price']
+                var["var10"] = new.get('PV')['size']
             template = 'pdfNieuwScenario.html' if type(vgl.get('PV')) == str else 'pdfNieuwScenarioMetPV.html'
 
             nieuw_pdf = render_template(template, **var)

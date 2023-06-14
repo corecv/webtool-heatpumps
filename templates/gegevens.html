@@ -7,7 +7,7 @@
     <h1 class = "page_title"> Algemene gegevens </h1>
     <form method="POST">
         {{ form.csrf_token }}
-        <p>Hoeveel personen leven er in uw woning?</p>
+        <p>Hoeveel personen zijn er gehuisvestigd in uw woning?</p>
         <p> 
             <!-- {{ form.size.label }} -->
             {{ form.size(size=5, width = 50) }}
@@ -81,7 +81,7 @@
 
 <div  class = "column" >
     <h1 class = "page_title"> Uitleg </h1>
-    <p>Eerst en vooral hebben we enkel basisgegevens van de woning nodig. Het aantal personen dat hier woont is van belang om een inschatting te maken van het warmwatergebruik. Door op de secties hieronder te klikken kunt u per vraag extra uitleg raadplegen.
+    <p>Eerst hebben we enkele basisgegevens van de woning nodig. Het aantal personen dat hier woont is van belang om een inschatting te maken van het warmwatergebruik. Door op de secties hieronder te klikken kunt u per vraag extra uitleg raadplegen.
     </p>
 <button type="button" class="collapsible">Isolatiegraad / isolatiesterkte</button>
 <div class="content">
@@ -127,7 +127,7 @@
             </li>
             <br>
                 <li>
-                Ja, ik heb een combiketel. 
+                Ja, ik heb een combiketel: 
                 Water voor ruimteverwarming en sanitair warm water zijn aan elkaar gekoppeld. Duidt deze optie aan indien u niet weet of uw huidig systeem een combiketel is of niet.
             </li>
 
