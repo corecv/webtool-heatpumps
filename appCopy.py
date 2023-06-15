@@ -784,7 +784,7 @@ def chartimg(co2,kost,prim):
     fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, figsize=(8.27, 11.69))
 
     # Plot the data on each subplot
-    colors = [(0.107, 0.180, 0.186, 0.776),(0.107, 0.180, 0.186, 0.776),(0.107, 0.180, 0.186, 0.776)] if a == 3 else [(0.107, 0.180, 0.186, 0.776),(0.107, 0.180, 0.186, 0.776)]
+    colors = [(0.1, 0.1, 0.1, 0.5),(0.4196, 0.7059, 0.7294, 0.5),(0.4196, 0.7059, 0.7294, 0.5)] if a == 3 else [(0.1, 0.1, 0.1, 0.5),(0.4196, 0.7059, 0.7294, 0.5)]
 
     ax1.barh(x1, y1,color = colors)
     ax1.set_title('CO2 uitstoot')
