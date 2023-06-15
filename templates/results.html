@@ -21,29 +21,38 @@
         
     </p>
     {%for dict in table%}
-        <h3>{{dict.get('scenario')}}: {{dict.get('voorziening')}} </h3>
+
+    <button type="button" class="collapsible">{{dict.get('scenario')}}: {{dict.get('voorziening')}}</button>
+    <div class="content">
+        {%if dict.get('txt') == "LW"%}
+        <p style="text-align: justify;">Een lucht-water warmtepomp verwarmd water voor sanitaire voorzieningen of ruimteverwarming door warmte uit de omgevingslucht te onttrekken. In dit scenario zorgt de warmtepomp voor de volledige opwekking van ruimteverwarming en sanitair warm water. </p>
+
+        {%elif dict.get('txt') == "LL"%}
+        <p style="text-align: justify;">Een lucht-lucht warmtepomp verwarmd binnenlucht, en zorgt dus voor ruimteverwarming door warmte uit de omgevingslucht te onttrekken. In dit scenario gaan we ervan uit dat de warmtepomp dus enkel de ruimteverwarming voorziet, sanitair warm water wordt nog verkregen met reeds aanwezige voorzieningen.</p>
+        {%elif dict.get('txt') == "BW"%}
+        <p style="text-align: justify;">Een bodem-water warmtepomp verwarmd water voor sanitaire voorzieningen of ruimteverwarming door warmte uit de bodem te onttrekken. In dit scenario zorgt de warmtepomp voor de volledige opwekking van ruimteverwarming en sanitair warm water</p>
+        {%else%}
+        <p style="text-align: justify;">Bij een hybride (bodem-water) warmtepomp wordt een deel van de gevraagde warmte opgewekt via de warmtepomp door warmte uit de bodem te ontrekken. Het overige deel van de gevraagde warmte wordt opgewekt met de reeds aanwezige voorzieningen. De tool gaat ervan uit dat de warmtepomp ongeveer 70% van de warmtevraag voor zijn rekening neemt.</p>
+
+        {%endif%}
+
+        <p style="margin-left: 25px;">Besparing CO2: {{dict.get('CO2abs')}} kg = {{dict.get('CO2perc')}} %</p>
+        <p style="margin-left: 25px;">Besparing primaire energie: {{dict.get('prim')}} kWh = {{dict.get('primP')}}  %</p>
+        <p style="margin-left: 25px;">Besparing verbruikskost: {{dict.get('kost')}} €/jaar = {{dict.get('kostP')}} %</p>
+        <p style="margin-left: 25px;">Investering: {{dict.get('investering')}} €</p>
+
+        <!-- <h3>{{dict.get('scenario')}}: {{dict.get('voorziening')}} </h3>
         
             <p style="margin-left: 25px;">Besparing CO2: {{dict.get('CO2abs')}} kg = {{dict.get('CO2perc')}} %</p>
             <p style="margin-left: 25px;">Besparing primaire energie: {{dict.get('prim')}} kWh = {{dict.get('primP')}}  %</p>
             <p style="margin-left: 25px;">Besparing verbruikskost: {{dict.get('kost')}} €/jaar = {{dict.get('kostP')}} %</p>
-            <p style="margin-left: 25px;">Investering: {{dict.get('investering')}} €</p>
-
+            <p style="margin-left: 25px;">Investering: {{dict.get('investering')}} €</p> -->
+</div>
     {% endfor %}
     <br><br>
     <br><br>
      
-    <div class ="file">
-        <hr>
-        <!-- <h1 class = "page_title"> Download resultaten</h1> -->
-        <h3>Download hieronder een pdf met meer gedetailleerde resultaten</h3>
-        <h1 class = "page_title" style="font-size: 100%;text-align:center"><a href = "{{url_for('sendFile')}}" target="_blank" class = "page_title">Download</a></h1>
-    </div>
-    <div>
-        <hr>
-        <!-- <h1 class = "page_title">Keer terug naar het begin</h1> -->
-        <h3>Klik hieronder om snel terug te keren naar de beginpagina</h3>
-        <h1 class = "page_title" style="font-size: 100%;text-align:center""><a href = '/'> Start nieuwe simulatie</a></h1>
-    </div>
+   
 
 </div>
 
@@ -61,7 +70,7 @@
     Een staaf met een hoogte van 60% betekent een besparing van 60% in de overeenkomstige categorie t.o.v. de huidige situatie.
 </p>
 
-    <canvas id="myChart" style="width:100%;height:40%;float:left"></canvas>
+    <canvas id="myChart" style="width:100%;height:80%;float:left"></canvas>
 
 
     <script>
@@ -80,7 +89,7 @@
                 labels: {
                     // This more specific font property overrides the global property
                     font: {
-                        size: 25
+                        size: 15
                     }}},
                 
              
@@ -91,12 +100,22 @@
                             size: 20
                                             }
                             },
+                
+                labels: {
+                    font: {
+                        size: 30 // Set the desired font size for labels on each bar
+                    }
+                },
+        
                         },
                 responsive: true,
                 interaction: {
                 intersect: false,
                         },
                 scales: {
+ 
+
+        
                    
                     y: {display:true,
                     stacked: true,
@@ -105,7 +124,7 @@
                             display:true,
                             text:"Besparing t.o.v. huidige situatie[%]",
                             font: {
-                                    size: 20
+                                    size: 18
                                     }
                 
                             },
@@ -119,8 +138,10 @@
     new Chart(ctx, config);
 
     </script>
-    <p>
+    
+    <p><br>
         <ul>
+            <br>
         <li>CO2 =  de totale hoeveelheid CO2 die uitgestoten wordt ten gevolge van uw energieverbruik. </li>
         
         <li>Verbruikskost = de kost die u betaalt voor uw energieverbruik</li>
@@ -145,7 +166,38 @@
 
 
     </p>
+    <div >
+        <hr>
+        <!-- <h1 class = "page_title"> Download resultaten</h1> -->
+        <h3>Download hieronder een pdf met meer gedetailleerde resultaten</h3>
+        <h1 class = "page_title" style="font-size: 100%;text-align:center"><a href = "{{url_for('sendFile')}}" target="_blank" class = "page_title">Download resultaten in pdf</a></h1>
+    </div>
+    <div>
+        <hr>
+        <!-- <h1 class = "page_title">Keer terug naar het begin</h1> -->
+        <h3>Klik hieronder om snel terug te keren naar de beginpagina</h3>
+        <h1 class = "page_title" style="font-size: 100%;text-align:center"><a href = '/'> Start nieuwe simulatie</a></h1>
+    </div>
+
 </div>
 
+
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+    
+    for (i = 0; i < coll.length; i++) {
+      coll[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var content = this.nextElementSibling;
+        if (content.style.display === "block") {
+          content.style.display = "none";
+        } else {
+          content.style.display = "block";
+        }
+      });
+    }
+    </script>
 
 {% endblock %}

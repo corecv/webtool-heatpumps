@@ -14,7 +14,7 @@ body {margin: 5px;text-align:center;}
   left: 0;
   width: 100%;
    /* or any other size you want */
-  border-bottom: solid black;
+  /* border-bottom: solid black; */
 }
 
 .header img {

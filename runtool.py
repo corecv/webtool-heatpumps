@@ -117,8 +117,6 @@ def formTwoB():
 # @cache.cached(timeout=0,key_prefix='consumption')
 def consumption():
     energy_sources = session.get('verbruikers')
-    for s in energy_sources:
-        print(s.get('tokWh'))
     form = ConsumptionFormA()
     # print("formprint",form)
 
@@ -128,6 +126,7 @@ def consumption():
     sources = [source['naam'] for source in energy_sources]
     print(sources)
     sourcedata = {source['naam']:source.get('tokWh') for source in energy_sources}
+    print(sourcedata)
     pv = session.get("huidige voorzieningen").get('elektriciteit').get('PV')
     var = None
     if "aardgas" in sources and 'stookolie' not in sources:
@@ -192,10 +191,10 @@ def consumption():
         
 
 
-        verbruik['elektriciteit'] = form.elec.data * a if a != None else form.elec.data
+        verbruik['elektriciteit'] = form.elec.data  # * a if a != None else form.elec.data
         kost['elektriciteit'] = {"kost per kwh":form.elecC.data/a} if a != None else {"kost per kwh":form.elecC.data}
 
-
+        print("verbruik na inlezen",verbruik)
         session['verbruik'] = verbruik
         session['kost'] = kost
         
@@ -275,6 +274,17 @@ def results():
     for i in range(len(dict)):
         tabled = {"scenario":f'Scenario {i+1}',"voorziening":dict[i].get('profiel').get('ruimteverwarming'),"CO2abs":dict[i].get('co2abs'),"CO2perc":dict[i].get('co2'),"prim":dict[i].get('primaire'),"primP":dict[i].get('primaireP'),'kost':dict[i].get('kost'),'kostP':dict[i].get('kostP'),'investering':dict[i].get('investering')}
         n = dict[i].get('profiel').get('ruimteverwarming')
+        txt = ""
+        if "lucht-water" in n:
+            txt = 'LW'
+        elif "lucht-lucht" in n:
+            txt = 'LL'
+        elif "bodem-water" in n:
+            txt = 'BW'
+        elif "hybride" in n:
+            txt = 'HY'
+        tabled['txt'] = txt
+         
         dataset = {
             'label': f'{n}',
             'data': [dict[i].get('co2'),dict[i].get('primaireP'),dict[i].get('kostP')],
