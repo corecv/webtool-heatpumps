@@ -29,7 +29,7 @@ def dimensionering(voorziening,totvraag,insulation):
     print("scale",scale)
     if voorziening not in andere.keys():  #als de voorziening een warmtepomp is
         h = loadh[insulation]
-        vermogen = (scale*totvraag)/h  #nieuw vermogen bepalen,
+        vermogen = round((scale*totvraag)/h)  #nieuw vermogen bepalen,
         print("vermogen--",vermogen)
         selectlist = warmtepompen.get(voorziening)  #juiste lijst van warmtepompen selecteren
         ranges = sorted([i.get('maxVermogen') for i in selectlist])  #lijst met ranges van vermogen opstellen

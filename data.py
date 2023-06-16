@@ -83,14 +83,13 @@ Radiator        |         x      |           x        |         x
 Vloerverwarming |           x     |       x           |     x
 """
 #[[1.2,2.19,3.28],[4.38,4.7,5.14]]
-copLW = [[1.1,2.3,3.4],[4.4,5,5.3]]   
-copGW= [[1.4,2.4,3.8],[4.8,5.3,5.6]]
-copLL= [[1.03,2.05,3.08],[4.1,4.41,4.82]]
-copHY= [[1.1,2.3,3.4],[4.4,5,5.3]]  
+copLW = [[1.20,2.2,3.30],[4.39,4.72,5.16]]   
+copGW= [[1.21,2.42,3.63],[4.84,5.20,5.69]]
+copLL= [[1.35,2.05,3.08],[4.1,4.41,4.82]]
 
  
 
-cops = {"lucht-water warmtepomp":copLW,"bodem-water warmtepomp":copGW,"lucht-lucht warmtepomp":copLL,"hybride warmtepomp":copHY}
+cops = {"lucht-water warmtepomp":copLW,"bodem-water warmtepomp":copGW,"lucht-lucht warmtepomp":copLL,"hybride warmtepomp":copLW}
 #warmtepompen
 heatPump_LW_3 = {"naam":"lucht-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":6000} #,"varEff":COPair}
 heatPump_LW_5 = {"naam":"Lucht-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":7000}#,"varEff":COPair}
@@ -100,27 +99,27 @@ heatPump_LW_12 = {"naam":"lucht-water warmtepomp","Toepassing":"ruimteverwarming
 heatPump_LW_15 = {"naam":"lucht-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copLW,"maxVermogen":15,"eenheid vermogen":'kW',"prijs":15000}#,"varEff":COPair}
 
 heatPump_GW_3 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":6800} #,"varEff":COPgeo}
-heatPump_GW_5 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":13900,"varEff":COPgeo}
-heatPump_GW_8 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":16300,"varEff":COPgeo}
-heatPump_GW_10 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":10,"eenheid vermogen":'kW',"prijs":19000,"varEff":COPgeo}
-heatPump_GW_12 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":12,"eenheid vermogen":'kW',"prijs":20000,"varEff":COPgeo}
-heatPump_GW_15 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":15,"eenheid vermogen":'kW',"prijs":25000,"varEff":COPgeo}
+heatPump_GW_5 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":13900} #,"varEff":COPgeo}
+heatPump_GW_8 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":16300} #,"varEff":COPgeo}
+heatPump_GW_10 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":10,"eenheid vermogen":'kW',"prijs":19000} #,"varEff":COPgeo}
+heatPump_GW_12 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":12,"eenheid vermogen":'kW',"prijs":20000} #,"varEff":COPgeo}
+heatPump_GW_15 = {"naam":"bodem-water warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":copGW,"maxVermogen":15,"eenheid vermogen":'kW',"prijs":25000} #,"varEff":COPgeo}
 
-heatPump_LL_3 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":5000,"varEff":COPair}
-heatPump_LL_5 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":5300,"varEff":COPair}
-heatPump_LL_8 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.8,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":5500,"varEff":COPair}
-heatPump_LL_10 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.9,"maxVermogen":10,"eenheid vermogen":'kW',"prijs":5700,"varEff":COPair}
-heatPump_LL_12 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.9,"maxVermogen":12,"eenheid vermogen":'kW',"prijs":6000,"varEff":COPair}
+heatPump_LL_3 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":5000 }#,"varEff":COPair}
+heatPump_LL_5 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":5300}#,"varEff":COPair}
+heatPump_LL_8 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.8,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":5500}#,"varEff":COPair}
+heatPump_LL_10 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.9,"maxVermogen":10,"eenheid vermogen":'kW',"prijs":5700}#,"varEff":COPair}
+heatPump_LL_12 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.9,"maxVermogen":12,"eenheid vermogen":'kW',"prijs":6000}#,"varEff":COPair}
 
 heatPump_LL_15 = {"naam":"lucht-lucht warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":5.3,"maxVermogen":15,"eenheid vermogen":'kW',"prijs":7000,"varEff":COPair}
 
 
-heatPump_HY_3 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":4000,"varEff":COPgeo,"aandeel":0.7}
-heatPump_HY_5 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":6000,"varEff":COPgeo,"aandeel":0.7}
-heatPump_HY_8 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.8,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":9000,"varEff":COPgeo,"aandeel":0.7}
-heatPump_HY_10 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.9,"maxVermogen":10,"eenheid vermogen":'kW',"prijs":11000,"varEff":COPgeo,"aandeel":0.7}
-heatPump_HY_12 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.9,"maxVermogen":12,"eenheid vermogen":'kW',"prijs":13000,"varEff":COPgeo,"aandeel":0.7}
-heatPump_HY_15 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":5.3,"maxVermogen":15,"eenheid vermogen":'kW',"prijs":16000,"varEff":COPgeo,"aandeel":0.7}
+heatPump_HY_3 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":3,"eenheid vermogen":'kW',"prijs":6000,"aandeel":0.7}
+heatPump_HY_5 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.7,"maxVermogen":5,"eenheid vermogen":'kW',"prijs":7000,"aandeel":0.7}
+heatPump_HY_8 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.8,"maxVermogen":8,"eenheid vermogen":'kW',"prijs":10000,"aandeel":0.7}
+heatPump_HY_10 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.9,"maxVermogen":10,"eenheid vermogen":'kW',"prijs":11000,"aandeel":0.7}
+heatPump_HY_12 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":4.9,"maxVermogen":12,"eenheid vermogen":'kW',"prijs":12000,"aandeel":0.7}
+heatPump_HY_15 = {"naam":"hybride warmtepomp","Toepassing":"ruimteverwarming","verbruiker": "elektriciteit","efficientie":5.3,"maxVermogen":15,"eenheid vermogen":'kW',"prijs":15000,"aandeel":0.7}
 
 #doorstroomboilers
 doorstroomboiler_5 = {"naam":"doorstroomboiler","Toepassing":"sanitair warm water","verbruiker": "elektriciteit","efficientie":1,"maxVermogen":5,"prijs":500}
