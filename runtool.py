@@ -3,15 +3,16 @@ from forms import*
 from appCopy import main, generatePDF
 from data import toepassingen, RVinput,SWWinput,combiInput,Elecinput,scenarios,verbruikers
 import threading
+import os
 
 
 
 
 app = Flask(__name__)
-# SECRET_KEY = os.urandom(32)
-# cache = Cache(app)
+SECRET_KEY = os.urandom(32)
+
 app.config['SECRET_KEY'] = 'geheime tekst'
-# app.config['CACHE_TYPE'] = 'simple'
+
 
 
 @app.route('/', methods=('GET', 'POST'))

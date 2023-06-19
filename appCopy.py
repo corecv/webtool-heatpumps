@@ -184,21 +184,11 @@ def nieuwVerbruik(voorziening,oudverbruik,huidigVraagProfiel): #huidigVraagProfi
     if aandeel != None:
             newdict = {}
 
-            # if variableEff != None:
-            #     eff = [a*COP for a in variableEff]
-            #     verbruik = [(aandeel*a)/b for a,b in zip(huidigVraagProfiel, eff )]
-            #     verbruikC = [(aandeel*i)/COP for i in huidigVraagProfiel]
             verbruik = [(aandeel*i)/COP for i in huidigVraagProfiel]
-            # elif variableEff == None:
-            #     verbruik = [(aandeel*i)/COP for i in huidigVraagProfiel]
-            #     verbruikC = [(aandeel*i)/COP for i in huidigVraagProfiel]
-            # else:
-            #     print("nieuw verbruik berekenen failed")
 
             for k,v in oudverbruik.items():
                     newdict[k] = v*(1-aandeel)
             newdict[voorziening.get("verbruiker")] = sum(verbruik)
-            # return {"variabel":{"profiel":verbruik,"verbruik":newdict },"constant":{"profiel":verbruikC,"verbruik":newdict}}
             return {"profiel":verbruik,"verbruik":newdict}
 
 
@@ -211,7 +201,6 @@ def nieuwVerbruik(voorziening,oudverbruik,huidigVraagProfiel): #huidigVraagProfi
                         verbruik = [i/COP for i in huidigVraagProfiel]
             else:
                         print("nieuw verbruik berekenen failed")
-            # return {"variabel":{"profiel":verbruik,"verbruik":{voorziening.get("verbruiker"):sum(verbruik)}},"constant":{"profiel":verbruikC,"verbruik":{voorziening.get("verbruiker"):sum(verbruikC)}}}
             return {"profiel":verbruik,"verbruik":{voorziening.get("verbruiker"):sum(verbruik)}}
 
 """
@@ -401,15 +390,12 @@ def nieuwProfiel(toepassingen, scenario, huidigprof, PV,calcPV,index):
             energievraag = huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('energievraag') #if calcPV == False else huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('energievraag') - PV.get('size')
             newDict['voorziening'] = voorziening
             nieuwCons = nieuwVerbruik(voorziening = voorziening,oudverbruik=oudverbruik[toepassingen[i]],huidigVraagProfiel = energievraag ) #energievraag,COP=voorziening.get("efficientie"),variableEff=voorziening.get("varEff"),aandeel = voorziening.get("aandeel"),oudverbruik=huidigprof.get('dictVoorzieningen').get(toepassingen[i]).get('totverbruik'))
-        #    newDict['verbruik'] = nieuwCons.get("variabel")
             newDict['verbruik'] = nieuwCons.get("verbruik")
 
-            # newDict['verbruikConstant'] = nieuwCons.get("constant")
-            # print("constant",newDict['verbruikConstant']['verbruik'])
+
 
             newDict['totverbruik'] = nieuwCons.get('verbruik')
-            # newDict['totverbruik'] = newDict.get('verbruik').get('verbruik')         
-            # newDict['totverbruik'] = newDict.get('verbruik').get('verbruik')  #{aardgas: xxx}
+
             if nieuwevoorzienigen['ruimteverwarming']['verbruiker'] != nieuwevoorzienigen['sanitair warm water']['verbruiker']:
                 if toepassingen[i] == "sanitair warm water" and scenario['sanitair warm water'] == "warmtepomp_HY":
                     print('-1-1--1-------------------------------------------------')
