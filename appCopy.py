@@ -136,7 +136,7 @@ def verbruikverdeling(verbruik,pers, huidigevoorziening): #verbruik is een dicti
         verbruikSWW  = warmtevraagSWWf/voorzieningSWW.get('efficientie')
         percSWW = verbruikSWW/verbruik.get(verbruikerSWW)
     else:
-        verbruikSWW =0
+        verbruikSWW = 0
     
          
     if verbruikerRV == verbruikerSWW:
@@ -149,7 +149,7 @@ def verbruikverdeling(verbruik,pers, huidigevoorziening): #verbruik is een dicti
 
     else:
         # verbruikDict = {"ruimteverwarming":verbruik.get(verbruikerRV),"sanitair warm water":warmtevraagSWWf,"elektriciteit":verbruik.get("elektriciteit")}
-        verbruikDict = {"ruimteverwarming":verbruik.get(verbruikerRV),"sanitair warm water":verbruik.get(verbruikerSWW),"elektriciteit":verbruik.get("elektriciteit")}
+        verbruikDict = {"ruimteverwarming":verbruik.get(verbruikerRV),"sanitair warm water":verbruikSWW,"elektriciteit":verbruik.get("elektriciteit")}
 
     print(verbruikDict)
 
@@ -290,7 +290,7 @@ DICTIONARY VAN HUIDIG PROFIEL GENEREREN
 ================================================================================
 """
 def huidigProfiel(toepassingen,huidigevoorzieningen, huidigverbruik, slps):
-    
+    print(huidigevoorzieningen)
     print("")
     print("#######################################")
     print("HUIDIG PROFIEL GENEREREN")
@@ -552,6 +552,7 @@ code oproepen
 
 def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbruikers,PV,inwoners,COPindex):
     #data in verbruikers update (persoonlijke kostprijs per kwh bijvoorbeeld)
+    print(huidigeVoorzieningen)
     for k,v in updateverbruikers.items():
         verbruikers.get(k).update(v)
     
