@@ -119,7 +119,7 @@ class ConsumptionFormA(FlaskForm):
     sizePV = FloatField("Geef de grootte van uw zonnepaneel installatie in in kWh",default = 3500)
     pricePV = FloatField('Geef de kost van de zonnepaneel installatie in [€]',default = 4500) 
     stookolie  = FloatField('Geef uw jaarverbruik aan stookolie in L in [Liter]',default = 2000) 
-    stookolieC  = FloatField('Geef uw prijs (in €) per L in voor stookolie [€/L]',default = 0.08) 
+    stookolieC  = FloatField('Geef uw prijs (in €) per L in voor stookolie [€/L]',default = 0.6) 
 
 # "===vierde stap==="
 

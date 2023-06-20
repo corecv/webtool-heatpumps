@@ -653,7 +653,7 @@ def main(toepass,huidigeVoorzieningen,huidigverbruik,scenariosList,updateverbrui
 === TESTFUNCTIE ===
 """
 """Deze functie dient om deze code te runnen zonder heel de webpagina te openen"""
-test = True
+test = False
 if test == True:
     huidig = {"ruimteverwarming":andere.get("Stookolieketel"),"sanitair warm water":andere.get("Doorstroomboiler op gas"),"elektriciteit":andere.get("elektriciteitsnet")}
     cons = {"aardgas":20000,"elektriciteit":4000,"stookolie":10000}
