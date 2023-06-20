@@ -133,7 +133,7 @@ def verbruikverdeling(verbruik,pers, huidigevoorziening): #verbruik is een dicti
     voorzieningSWW = huidigevoorziening.get('sanitair warm water')
     verbruikerSWW = huidigevoorziening.get('sanitair warm water').get('verbruiker')
     if voorzieningSWW['naam'] != "Zonneboiler":
-        verbruikSWW  = warmtevraagSWWf/voorzieningSWW.get('efficientie')
+        verbruikSWW  = warmtevraagSWWf/voorzieningSWW.get('efficientie') if verbruik.get(verbruikerSWW) !=0 else 0
         percSWW = verbruikSWW/verbruik.get(verbruikerSWW) if verbruik.get(verbruikerSWW) !=0 else 0
     else:
         verbruikSWW = 0
