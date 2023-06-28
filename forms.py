@@ -1,57 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField,TextAreaField, IntegerField, BooleanField,RadioField, SelectField, FloatField
-from wtforms.validators import InputRequired, Length, NumberRange
-from data import RVinput, SWWinput, Elecinput, combiInput
-
-
+from wtforms import IntegerField,RadioField, FloatField
+from wtforms.validators import InputRequired, NumberRange
+from data import RVinput, SWWinput
 
 """=== generate inputs voor meerdere forms"""
 """Hieronder staat de declaratie van inputs die in meerdere forms gebruikt worden, elk field wordt gemaakt via een functie die het field genereert"""
 def elecVoorziening():
     elec = RadioField('Heeft u reeds zonnepanelen?',choices=["Ja","Nee"],validators=[InputRequired()])
     return elec
-
-# def jaarverbruikElec():
-#     electriciteit = FloatField('Jaarverbruik electriciteit',validators=[InputRequired()],default = 3500)
-#     costElec = FloatField('Kost per kWh electriciteit',validators=[InputRequired()],default = 0.3)
-
-    # return electriciteit
-# def costElec():
-#     costElec = FloatField('Kost per kWh electriciteit',validators=[InputRequired()],default = 0.3)
-#     return costElec
-# def jaarverbruikAardgas():
-#     aardgas = FloatField('Jaarverbruik aardgas',validators=[InputRequired()],default = 20000)
-#     return aardgas
-
-# def costAardgas():
-#     costAardgas = FloatField('Kost per kWh aardgas',validators=[InputRequired()],default = 0.5)
-#     return costAardgas
-
-# def jaarverbruikStookolie(): 
-#     stookolie = FloatField('Jaarverbruik stookolie',validators=[InputRequired()],default = 0)
-#     return stookolie
-
-# def costStookolie():
-#     costStookolie = FloatField('Kost per kWh stookolie',validators=[InputRequired()],default = 0.5)
-#     return costStookolie
-
-# def pvData():
-#     sizePV = FloatField('kWh van PV-installatie',validators=[InputRequired()],default = 3500)
-#     return sizePV
-
-
-
-
-# def pricePV():
-#     pricePV = FloatField('Kost PV-installatie',validators=[InputRequired()],default = 4500)
-#     return pricePV
-
-
-# def priceBoiler():  
-#     prijsBoiler = FloatField('kost zonneboiler installatie',validators=[InputRequired()],default = 5000)
-#     return prijsBoiler
-
-
 
 
 """===eerste stap"""

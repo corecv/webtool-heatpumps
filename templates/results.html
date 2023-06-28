@@ -4,7 +4,7 @@
 <div  class = "column" >
     <h1 class = "page_title"> Uw persoonlijke resultaten</h1>
     <h1> Uw persoonlijke resultaten zijn berekend </h1>
-    <p>Nu alle stappen voltooid zijn, heeft de tool een analyse van uw huidige woning en energie-installatie kunnen uitvoeren en mogelijke opties voor warmtepompen gegenereerd. Download onderstaand PDF-bestand om deze nieuwe scenario’s met hun bijhorende investeringen en besparingen op vlak van energiegebruik en CO2-uitstoot te bekijken.
+    <p>Nu alle stappen voltooid zijn, heeft de tool een analyse van uw huidige woning en energie-installatie kunnen uitvoeren en mogelijke opties voor warmtepompen gegenereerd. Download onderstaand PDF-bestand om deze nieuwe scenario’s met hun bijhorende investeringen en besparingen op vlak van energiegebruik en CO<sub>2</sub>-uitstoot te bekijken.
         <br><br>Voor meer uitleg over wat de types warmtepompen juist inhouden verwijzen we graag naar onze "Gids naar een duurzamere energietranstie bij u thuis", een brochure die het CORE-team uitbracht in 2023 met als doel een overzicht te bieden van duurzame verwarmingstechnieken. Klik hier om naar de brochure te surfen: <a href = "https://www.thinkcore.be/nl/gids-naar-een-duurzamere-energietransitie" target="_blank">Gids</a>
     
         <br><br>
@@ -36,14 +36,14 @@
 
         {%endif%}
 
-        <p style="margin-left: 25px;">Besparing CO2: {{dict.get('CO2abs')}} kg = {{dict.get('CO2perc')}} %</p>
+        <p style="margin-left: 25px;">Besparing CO<sub>2</sub>: {{dict.get('CO2abs')}} kg = {{dict.get('CO2perc')}} %</p>
         <p style="margin-left: 25px;">Besparing primaire energie: {{dict.get('prim')}} kWh = {{dict.get('primP')}}  %</p>
         <p style="margin-left: 25px;">Besparing verbruikskost: {{dict.get('kost')}} €/jaar = {{dict.get('kostP')}} %</p>
         <p style="margin-left: 25px;">Investering: {{dict.get('investering')}} €</p>
 
         <!-- <h3>{{dict.get('scenario')}}: {{dict.get('voorziening')}} </h3>
         
-            <p style="margin-left: 25px;">Besparing CO2: {{dict.get('CO2abs')}} kg = {{dict.get('CO2perc')}} %</p>
+            <p style="margin-left: 25px;">Besparing CO<sub>2</sub>: {{dict.get('CO<sub>2</sub>abs')}} kg = {{dict.get('CO<sub>2</sub>perc')}} %</p>
             <p style="margin-left: 25px;">Besparing primaire energie: {{dict.get('prim')}} kWh = {{dict.get('primP')}}  %</p>
             <p style="margin-left: 25px;">Besparing verbruikskost: {{dict.get('kost')}} €/jaar = {{dict.get('kostP')}} %</p>
             <p style="margin-left: 25px;">Investering: {{dict.get('investering')}} €</p> -->
@@ -52,7 +52,7 @@
     <br><br>
     <strong>KANTTEKENING:</strong> 
     <ul style="text-align:justify">
-    <li >De berekende waardes met betrekking tot investering, energiebesparing en CO2-besparing zijn louter richtwaarden. De stappen in deze tool zijn te beperkt om een gedetailleerde berekening te kunnen uitvoeren. Indien u een meer accurate studie van uw huidige energie-installatie en mogelijkheden tot een warmtepomp zoekt, neem dan contact op met een deskundige.</li>
+    <li >De berekende waardes met betrekking tot investering, energiebesparing en CO<sub>2</sub>-besparing zijn louter richtwaarden. De stappen in deze tool zijn te beperkt om een gedetailleerde berekening te kunnen uitvoeren. Indien u een meer accurate studie van uw huidige energie-installatie en mogelijkheden tot een warmtepomp zoekt, neem dan contact op met een deskundige.</li>
     <br>
 
     <li>Negatieve besparing primaire energie: Dit heeft alles te maken met de omrekenfactor die de tool gebruikt. Een kWh elektriciteit komt (in België) overeen met 2,5 kWh primaire energie terwijl een kWh aardgas simpelweg gelijk is aan een kWh primaire energie. </li>
@@ -153,7 +153,7 @@
     <p><br>
         <ul>
             <br>
-        <li>CO2 =  de totale hoeveelheid CO2 die uitgestoten wordt ten gevolge van uw energieverbruik. </li>
+        <li>CO<sub>2</sub> =  de totale hoeveelheid CO<sub>2</sub> die uitgestoten wordt ten gevolge van uw energieverbruik. </li>
         
         <li>Verbruikskost = de kost die u betaalt voor uw energieverbruik</li>
         <li>Primaire energie = de initiële hoeveelheid energie die nodig is om 
