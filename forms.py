@@ -11,47 +11,45 @@ def elecVoorziening():
     elec = RadioField('Heeft u reeds zonnepanelen?',choices=["Ja","Nee"],validators=[InputRequired()])
     return elec
 
-def jaarverbruikElec():
-    electriciteit = FloatField('Jaarverbruik electriciteit',validators=[InputRequired()],default = 3500)
-    costElec = FloatField('Kost per kWh electriciteit',validators=[InputRequired()],default = 0.3)
+# def jaarverbruikElec():
+#     electriciteit = FloatField('Jaarverbruik electriciteit',validators=[InputRequired()],default = 3500)
+#     costElec = FloatField('Kost per kWh electriciteit',validators=[InputRequired()],default = 0.3)
 
-    return electriciteit
-def costElec():
-    costElec = FloatField('Kost per kWh electriciteit',validators=[InputRequired()],default = 0.3)
-    return costElec
-def jaarverbruikAardgas():
-    aardgas = FloatField('Jaarverbruik aardgas',validators=[InputRequired()],default = 20000)
-    return aardgas
+    # return electriciteit
+# def costElec():
+#     costElec = FloatField('Kost per kWh electriciteit',validators=[InputRequired()],default = 0.3)
+#     return costElec
+# def jaarverbruikAardgas():
+#     aardgas = FloatField('Jaarverbruik aardgas',validators=[InputRequired()],default = 20000)
+#     return aardgas
 
-def costAardgas():
-    costAardgas = FloatField('Kost per kWh aardgas',validators=[InputRequired()],default = 0.5)
-    return costAardgas
+# def costAardgas():
+#     costAardgas = FloatField('Kost per kWh aardgas',validators=[InputRequired()],default = 0.5)
+#     return costAardgas
 
-def jaarverbruikStookolie(): 
-    stookolie = FloatField('Jaarverbruik stookolie',validators=[InputRequired()],default = 0)
-    return stookolie
+# def jaarverbruikStookolie(): 
+#     stookolie = FloatField('Jaarverbruik stookolie',validators=[InputRequired()],default = 0)
+#     return stookolie
 
-def costStookolie():
-    costStookolie = FloatField('Kost per kWh stookolie',validators=[InputRequired()],default = 0.5)
-    return costStookolie
+# def costStookolie():
+#     costStookolie = FloatField('Kost per kWh stookolie',validators=[InputRequired()],default = 0.5)
+#     return costStookolie
 
-def pvData():
-    sizePV = FloatField('kWh van PV-installatie',validators=[InputRequired()],default = 3500)
-    return sizePV
-
-def solarBoilerdata():
-    sizeB = FloatField('kWh van zonne-boiler installatie',validators=[InputRequired()],default = 2500)
-    return sizeB
+# def pvData():
+#     sizePV = FloatField('kWh van PV-installatie',validators=[InputRequired()],default = 3500)
+#     return sizePV
 
 
-def pricePV():
-    pricePV = FloatField('Kost PV-installatie',validators=[InputRequired()],default = 4500)
-    return pricePV
 
 
-def priceBoiler():  
-    prijsBoiler = FloatField('kost zonneboiler installatie',validators=[InputRequired()],default = 5000)
-    return prijsBoiler
+# def pricePV():
+#     pricePV = FloatField('Kost PV-installatie',validators=[InputRequired()],default = 4500)
+#     return pricePV
+
+
+# def priceBoiler():  
+#     prijsBoiler = FloatField('kost zonneboiler installatie',validators=[InputRequired()],default = 5000)
+#     return prijsBoiler
 
 
 
@@ -80,58 +78,20 @@ class FormTwoB(FlaskForm):
     sww = RadioField(label ='Welke voorziening heeft u voor sanitair warm water?', choices=[(a["naam"],a["naam"]) for a in SWWinput], validators=[InputRequired()])
     elec = elecVoorziening()
 
-
-
-"""===derde stap==="""
-# class FormThreeA(FlaskForm):
-#     aardgas = jaarverbruikAardgas()
-#     costAardgas = costAardgas()
-#     electriciteit = jaarverbruikElec()
-#     costElec = costElec()
-    
-# class FormThreeB(FlaskForm):
-#     stookolie = jaarverbruikStookolie()
-#     costStookolie = costStookolie()
-#     electriciteit = jaarverbruikElec()
-#     costElec = costElec()
-#         setattr(ConsumptionForm, 'sizePV', FloatField('kWh van pv installatie',validators=[InputRequired()],default = 3500,description= "Zonnepanelen: zie uitleg rechts"))
-#         setattr(ConsumptionForm, 'pricePV', FloatField('kost pv installatie',validators=[InputRequired()],default = 4500))
-#         setattr(ConsumptionForm, f'{name}_consumption', FloatField(f'Geef uw jaarverbruik aan {name} in [{eenheid}]',default = avg, validators=[InputRequired()],description= f'{name}'))
-#         setattr(ConsumptionForm, f'{name}_prijs', FloatField(f'Geef uw prijs (in €) per {eenheid} in voor {name}',default = price,validators=[InputRequired()]))
-# class ConsumptionFormA(FlaskForm):
-#     aardgas 
-
-# class ConsumptionFormB(FlaskForm):
-    
-# class ConsumptionFormC(FlaskForm):
-
-# class ConsumptionFormD(FlaskForm):
-# class ConsumptionFormE(FlaskForm):
 class ConsumptionForm(FlaskForm):
 
     pass
 
 class ConsumptionFormA(FlaskForm):
     aardgas  = FloatField('Geef uw jaarverbruik aan aardgas in kWh',default = 20000)
-    aardgasC  = FloatField('Geef uw prijs (in €) per kWh in voor aardgas',default = 0.3)
+    aardgasC  = FloatField('Geef uw prijs (in €) per kWh in voor aardgas',default = 0.1)
     elec  = FloatField('Geef uw jaarverbruik aan elektriciteit in kWh',default = 3500)
-    elecC  = FloatField('Geef uw prijs (in €) per kWh in voor elektriciteit',default = 0.5) 
+    elecC  = FloatField('Geef uw prijs (in €) per kWh in voor elektriciteit',default = 0.4) 
     sizePV = FloatField("Geef de grootte van uw zonnepaneel installatie in in kWh",default = 3500)
     pricePV = FloatField('Geef de kost van de zonnepaneel installatie in [€]',default = 4500) 
     stookolie  = FloatField('Geef uw jaarverbruik aan stookolie in L in [Liter]',default = 2000) 
-    stookolieC  = FloatField('Geef uw prijs (in €) per L in voor stookolie [€/L]',default = 0.6) 
+    stookolieC  = FloatField('Geef uw prijs (in €) per L in voor stookolie [€/L]',default = 0.0008) 
 
-# "===vierde stap==="
 
-# class FormFourA(FlaskForm):
-#     sizeB = solarBoilerdata()
-#     priceB = priceBoiler()
-    
-    
-# class FormFourB(FlaskForm):
-#     sizeB = solarBoilerdata()
-#     priceB = priceBoiler()
-#     sizePV = pvData()
-#     pricePV = pricePV()
 
    
